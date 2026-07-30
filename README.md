@@ -1,0 +1,75 @@
+# Skills
+
+Skills d'agent (Claude Code, Codex, Cursor…) partagés par l'équipe **keyes-dxp**.
+
+Un skill = un dossier sous `skills/` contenant un `SKILL.md` avec un frontmatter YAML
+(`name`, `description`). L'agent charge la description en permanence, et le corps du skill
+uniquement quand la tâche correspond.
+
+## Skills disponibles
+
+| Skill | Description |
+|---|---|
+| [`keyes-dxp-nextjs`](skills/keyes-dxp-nextjs/SKILL.md) | Stack React/Next.js standardisée de l'équipe : quelle librairie pour quel besoin, règles server actions, auth, Drizzle, tests, pièges de version. |
+
+## Installation
+
+Via le CLI [`skills`](https://github.com/vercel-labs/skills) :
+
+```bash
+# dans un projet, pour l'agent détecté automatiquement
+npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs
+
+# globalement (disponible dans tous tes projets)
+npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs --global
+
+# pour un agent précis
+npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs --agent claude-code
+```
+
+> **Repo privé** : le CLI clone via git, donc l'installation fonctionne tant que ton accès
+> git à ce repo est configuré (SSH ou `gh auth login`). Sinon, clone le repo et pointe le
+> CLI sur le chemin local : `npx skills add ./chemin/vers/Skills`.
+
+### Mise à jour
+
+```bash
+npx skills update
+```
+
+## Structure
+
+```
+skills/
+  keyes-dxp-nextjs/
+    SKILL.md              # tableau de décision + règles — chargé en premier
+    references/
+      version-gotchas.md  # APIs qui ont changé après le training des modèles
+      new-project.md      # checklist de bootstrap
+      server-actions.md   # next-safe-action, authActionClient
+      data-fetching.md    # RSC, nuqs, TanStack Query, route handlers
+      forms.md            # TanStack Form + Zod
+      ui-styling.md       # Tailwind v4, shadcn/ui, motion, charts
+      auth-and-cms.md     # Better Auth vs PayloadCMS
+      database.md         # Drizzle ORM
+      testing.md          # Vitest + Playwright
+```
+
+Le `SKILL.md` reste court et actionnable ; les fichiers `references/` ne sont lus par
+l'agent que lorsqu'il en a besoin.
+
+## Contribuer
+
+Le but du skill `keyes-dxp-nextjs` est l'uniformité : **les mêmes packages dans toutes les
+apps**. Une modification de la stack se discute avant d'être committée.
+
+1. Une décision par ligne dans le tableau `Need → library`, avec la colonne « Do NOT use »
+   remplie — c'est elle qui empêche l'agent d'improviser.
+2. Le détail et les exemples de code vont dans `references/`, pas dans `SKILL.md`.
+3. Toute API qui a changé récemment va dans `references/version-gotchas.md`.
+4. Les exemples de code sont écrits pour la version réellement utilisée en production, pas
+   pour la dernière version lue dans un blog.
+
+## Licence
+
+MIT — voir [LICENSE](LICENSE).
