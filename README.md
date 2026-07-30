@@ -18,18 +18,16 @@ Via le CLI [`skills`](https://github.com/vercel-labs/skills) :
 
 ```bash
 # dans un projet, pour l'agent détecté automatiquement
-npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs
+npx skills add Lionel-Dutrieux/skills --skill keyes-dxp-nextjs
 
 # globalement (disponible dans tous tes projets)
-npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs --global
+npx skills add Lionel-Dutrieux/skills --skill keyes-dxp-nextjs --global
 
 # pour un agent précis
-npx skills add lionel-dutrieux/skills --skill keyes-dxp-nextjs --agent claude-code
+npx skills add Lionel-Dutrieux/skills --skill keyes-dxp-nextjs --agent claude-code
 ```
 
-> **Repo privé** : le CLI clone via git, donc l'installation fonctionne tant que ton accès
-> git à ce repo est configuré (SSH ou `gh auth login`). Sinon, clone le repo et pointe le
-> CLI sur le chemin local : `npx skills add ./chemin/vers/Skills`.
+Le repo est public : aucun accès git particulier n'est nécessaire pour l'installer.
 
 ### Mise à jour
 
