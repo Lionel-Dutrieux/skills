@@ -1,0 +1,17 @@
+{
+  "name": "keyes-dxp",
+  "owner": {
+    "name": "Lionel Dutrieux",
+    "url": "https://github.com/Lionel-Dutrieux"
+  },
+  "description": "keyes-dxp team skills, as an installable Claude Code plugin.",
+  "plugins": [
+    {
+      "name": "keyes-dxp-skills",
+      "source": "./",
+      "description": "Standard technology stacks for the keyes-dxp team: React/Next.js, and ASP.NET Core (.NET 10) serving a React SPA.",
+      "category": "engineering",
+      "keywords": ["nextjs", "react", "dotnet", "stack"]
+    }
+  ]
+}

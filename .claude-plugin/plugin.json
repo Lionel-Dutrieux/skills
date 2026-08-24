@@ -1,0 +1,22 @@
+{
+  "name": "keyes-dxp-skills",
+  "displayName": "keyes-dxp skills",
+  "version": "1.0.0",
+  "description": "Standard technology stacks for the keyes-dxp team: React/Next.js, and ASP.NET Core (.NET 10) serving a React SPA. Which library for which need, and the rules that go with them.",
+  "author": {
+    "name": "Lionel Dutrieux",
+    "url": "https://github.com/Lionel-Dutrieux"
+  },
+  "homepage": "https://github.com/Lionel-Dutrieux/skills",
+  "repository": "https://github.com/Lionel-Dutrieux/skills",
+  "license": "MIT",
+  "keywords": [
+    "nextjs",
+    "react",
+    "dotnet",
+    "aspnetcore",
+    "tanstack",
+    "shadcn",
+    "stack"
+  ]
+}
