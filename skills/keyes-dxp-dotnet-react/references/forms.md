@@ -5,8 +5,9 @@ TanStack Form + Zod + shadcn/ui, consumed through **one typed `useAppForm` hook*
 from one form to the next.
 
 Reference implementation: `PLX.EUROPE.BEL.PUBBEN_PUBLIC_WEBSITES` (`app/src/forms/`). The
-shapes below are that codebase, minus Next.js. Submission goes to the ASP.NET backend
-through TanStack Query + `openapi-fetch` instead of a server action.
+shapes below are that codebase, minus Next.js. Submission goes to the ASP.NET backend through
+the generated TanStack Query mutation hooks (`references/api-contract.md`) instead of a
+server action.
 
 ## Layout
 
@@ -160,25 +161,15 @@ the rest of the form does not. There is no `watch()`.
 ## A feature form
 
 ```tsx
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { z } from "zod"
-import { api } from "@/lib/api"          // openapi-fetch client
+import { useUpdateAddress } from "../useProfileWrites"   // wraps the generated function
 import { useAppForm } from "@/forms/form-context"
 
 export function AddressForm({ address }: { address: Address }) {
   const { t } = useTranslation()
-  const queryClient = useQueryClient()
-
-  const { mutateAsync } = useMutation({
-    mutationFn: async (value: AddressInput) => {
-      const { data, error } = await api.PUT("/api/users/me/address", { body: value })
-      if (error) throw error
-      return data
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users", "me"] }),
-  })
+  const { mutateAsync } = useUpdateAddress()
 
   const form = useAppForm({
     defaultValues: {
@@ -221,27 +212,44 @@ export function AddressForm({ address }: { address: Address }) {
 - `<form.AppField>` (not `<form.Field>`) is what exposes `field.TextField` & co.
 - `<form.AppForm>` is what exposes `form.SubmitButton`.
 - `e.preventDefault()` then `form.handleSubmit()`. Always.
-- Submission goes through a **TanStack Query mutation**, and success invalidates the queries
-  the change affects. Never `fetch()` straight from `onSubmit` — the cache would go stale.
+- Submission goes through the feature's **write hook**, which wraps the generated request
+  function and carries its own invalidations. Never `fetch()` from `onSubmit`, and never
+  re-implement the request — see `references/api-contract.md`.
 
 ## Validation
 
-**Per-field validators** (`validators={{ onChange: z.string().min(1, t("…")) }}`) are the
-default: messages get translated at the call site, and the field owns its own rule.
+**Start from the generated schema.** When the form maps to a request body, the contract
+already describes required fields, lengths, patterns and enums — orval emits the Zod schema
+for it (`references/api-contract.md`). Use it as the form-level validator rather than retyping
+the rules:
 
-Use a **whole-object schema** on the form (`validators: { onChange: addressSchema }`) when
-the form maps 1:1 to a backend DTO or when rules span several fields (password confirmation,
-date ranges). Both can coexist.
+```ts
+import { saveAddressRequestSchema } from "@/api/generated/zod/me/me"
 
-Client-side validation is UX. **The boundary is the .NET endpoint** — it validates the same
-rules server-side, whatever the app uses (DataAnnotations, FluentValidation, …). Never rely
-on the form having run.
+const form = useAppForm({
+  defaultValues: { … },
+  validators: { onChange: saveAddressRequestSchema },
+})
+```
+
+The client rules then follow the server's by construction, and a field added in C# surfaces as
+a type error instead of a silent gap.
+
+**Per-field validators** (`validators={{ onChange: z.string().min(1, t("…")) }}`) cover what
+the contract cannot express: a translated message, a confirmation field, a rule that only
+exists in the UI. They compose with the schema above — both can be attached.
+
+Whatever runs on the client is **UX**. The boundary is the .NET endpoint, which re-validates
+the same rules server-side (FluentValidation or otherwise). Never rely on the form having run.
 
 ## Server errors from ASP.NET
 
 Two shapes, two treatments.
 
-**Field-level** — the API answers `400` with `ValidationProblemDetails`
+The mutator already turned the response into an `ApiError` carrying `status`, `errorCode` and
+the `ProblemDetails` extensions — you never touch a raw `Response` here.
+
+**Field-level** — the API answers `400` with per-field errors in the problem extensions
 (`{ errors: { "Email": ["Already taken"] } }`). Give them back to the fields via the form's
 `onSubmitAsync` validator, so they display exactly like a client-side error:
 
@@ -254,12 +262,13 @@ const form = useAppForm({
         await mutateAsync(value)
         return null
       } catch (error) {
-        const problem = error as { errors?: Record<string, string[]> }
-        if (!problem.errors) return { form: t("errors.unexpected") }
+        const problem = error as ApiError
+        const errors = problem.extensions.errors as Record<string, string[]> | undefined
+        if (!errors) return { form: t(`errors.${problem.errorCode ?? "unexpected"}`) }
         // ASP.NET PascalCases the keys — lowercase them to match the field names
         return {
           fields: Object.fromEntries(
-            Object.entries(problem.errors).map(([key, messages]) => [
+            Object.entries(errors).map(([key, messages]) => [
               key.charAt(0).toLowerCase() + key.slice(1),
               messages[0],
             ]),
@@ -274,8 +283,9 @@ const form = useAppForm({
 Check the return shape against the installed `@tanstack/react-form` version before writing
 it — this API moved in v1.
 
-**Global** — `401`, `403`, `409`, or anything you cannot attribute to a field: keep it in a
-plain `useState<string | null>` and render it in a banner above the form. That is what the
+**Global** — `401`, `403`, `409`, or anything you cannot attribute to a field: translate
+`errorCode` and keep the message in a plain `useState<string | null>`, rendered in a banner
+above the form. Never display the raw `detail`. That is what the
 reference codebase does for login (`invalidCredentials`, `emailNotVerified`). A toast is
 acceptable for a save that failed for an unrelated reason; an authentication error belongs
 in the form, where the user is looking.

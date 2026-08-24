@@ -11,7 +11,7 @@ uniquement quand la tâche correspond.
 | Skill | Description |
 |---|---|
 | [`keyes-dxp-nextjs`](skills/keyes-dxp-nextjs/SKILL.md) | Stack React/Next.js standardisée de l'équipe : quelle librairie pour quel besoin, règles server actions, auth, Drizzle, tests, pièges de version. |
-| [`keyes-dxp-dotnet-react`](skills/keyes-dxp-dotnet-react/SKILL.md) | Stack ASP.NET Core (.NET 10) + SPA React (template officiel Microsoft, Vite) : quelle librairie pour quel besoin côté client, types API générés depuis OpenAPI, règles de sécurité et de state. |
+| [`keyes-dxp-dotnet-react`](skills/keyes-dxp-dotnet-react/SKILL.md) | Stack ASP.NET Core (.NET 10) + SPA React (Vite) : tableau de décision des deux côtés (minimal APIs, EF Core 10, Hangfire, Microsoft.Identity.Web côté serveur ; TanStack + shadcn côté client), client API généré par orval depuis le contrat OpenAPI. |
 
 ## Installation
 
@@ -55,6 +55,7 @@ skills/
   keyes-dxp-dotnet-react/
     SKILL.md              # tableau de décision + règles — chargé en premier
     references/
+      api-contract.md     # orval, contrat OpenAPI, ProblemDetails, drift check
       forms.md            # TanStack Form (createFormHook) + Zod + erreurs ASP.NET
 ```
 
