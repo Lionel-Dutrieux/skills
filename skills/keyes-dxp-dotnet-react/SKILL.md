@@ -9,9 +9,9 @@ The goal is uniformity: the same packages in every app, so any team member can m
 between codebases without relearning. This document is the source of truth for
 "which library do we use for X", on both sides of the wire.
 
-Two tables below: **the React client** first, **the ASP.NET Core backend** second. The
-solution's project layout is the one thing still left open — see the note under the backend
-table.
+The table below covers **the React client**; the ASP.NET Core one lives in
+`references/backend.md`, and `references/api-contract.md` covers the generated client that
+binds the two.
 
 ## STOP — run this before writing code or adding a package
 
