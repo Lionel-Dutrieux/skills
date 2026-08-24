@@ -43,8 +43,9 @@ Utilities then exist automatically: `bg-brand-500`, `font-display`, `rounded-car
 ## shadcn/ui
 
 - Install components with `pnpm dlx shadcn@latest add <component>`. Never hand-write one.
-- The CLI writes into `components/ui/` and is meant to be edited afterwards — the files
-  are yours, upgrades are re-runs of `add`.
+- The CLI writes into `components/ui/`. Upstream docs call those files "yours"; **we do not
+  edit them** — upgrades are re-runs of `add --overwrite`, which would erase local changes.
+  Customize with theme tokens, call-site props, or a wrapper component instead.
 - `cn()` lands in `lib/utils.ts` on init; import it from there rather than re-implementing.
 - `cmdk` is consumed only through the generated `Command` component.
 - Charts come from `pnpm dlx shadcn@latest add chart` and expect a `ChartConfig` object

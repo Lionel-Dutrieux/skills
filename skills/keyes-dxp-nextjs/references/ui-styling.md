@@ -29,11 +29,28 @@ pnpm dlx shadcn@latest init                 # once, at project setup
 pnpm dlx shadcn@latest add button dialog form table
 ```
 
-- Generated files land in `components/ui/` and **are yours to edit**. Customize there.
-- Never hand-write a component that shadcn/ui provides. If you need a variant, extend the
-  generated file's `cva` variants rather than forking it.
+- Generated files land in `components/ui/` and are **CLI-owned, read-only for us**. They get
+  re-fetched with `pnpm dlx shadcn@latest add <component> --overwrite` when upstream ships a
+  fix; anything you edited there is gone. See the rule in `SKILL.md`.
+- Never hand-write a component that shadcn/ui provides.
+- To customize: theme tokens in `app/globals.css` first, then `variant` / `size` props and
+  `className` at the call site, then a wrapper of your own outside `components/ui/` (its own
+  `cva` if it needs new variants).
 - Project components go in `components/`, feature components next to their feature. Only
   shadcn primitives live in `components/ui/`.
+
+```tsx
+// components/submit-button.tsx — our defaults, composed on top of the primitive
+import { Button, type ButtonProps } from "@/components/ui/button"
+
+export function SubmitButton({ pending, children, ...props }: ButtonProps & { pending?: boolean }) {
+  return (
+    <Button type="submit" disabled={pending} {...props}>
+      {pending ? <Loader2 className="animate-spin" /> : children}
+    </Button>
+  )
+}
+```
 
 ## cn()
 

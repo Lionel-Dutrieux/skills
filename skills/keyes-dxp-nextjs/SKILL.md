@@ -76,9 +76,22 @@ hides the action from unauthorized users. Authorization is enforced server-side,
 handler bodies, search params, webhook payloads, env vars — is parsed by a Zod schema
 before use. Infer TypeScript types from schemas (`z.infer`), never declare them twice.
 
-**Never hand-roll a shadcn/ui component.** Add it with
-`pnpm dlx shadcn@latest add <component>` and then edit the generated file. Rewriting one
-from scratch breaks upgrades and diverges from the other apps.
+**Never edit anything in `components/ui/`.** Those files belong to the CLI:
+`pnpm dlx shadcn@latest add <component>` writes them, and `add --overwrite` is how we pull
+upstream fixes, accessibility patches and new variants. A local edit is silently lost on the
+next upgrade — or, worse, freezes the app on an old version because nobody dares re-run the
+CLI. Hand-writing a component shadcn/ui already provides is the same mistake.
+
+Customize in this order instead:
+
+1. **Theme tokens** — colors, radius, fonts in `app/globals.css` (`@theme`). Fixes "it doesn't look like us"
+   everywhere at once, and is exactly what the primitives read.
+2. **Props at the call site** — the component's own `variant` / `size` props, plus a
+   `className` (merged by `cn()`, so Tailwind conflicts resolve correctly).
+3. **Your own wrapper**, outside `components/ui/`, composing the primitive and adding your
+   defaults, behaviour or extra `cva` variants. This is where app-specific components live.
+4. Only if none of the above can express it: fork the primitive into your own component with
+   a new name, and say so explicitly. Never by mutating the file in `components/ui/`.
 
 **Prefer the server.** In the App Router, most "state" is not client state. Reach for
 Server Components first, then the URL (`nuqs`), then the TanStack Query cache. Adding a

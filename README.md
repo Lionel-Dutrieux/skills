@@ -11,6 +11,7 @@ uniquement quand la tâche correspond.
 | Skill | Description |
 |---|---|
 | [`keyes-dxp-nextjs`](skills/keyes-dxp-nextjs/SKILL.md) | Stack React/Next.js standardisée de l'équipe : quelle librairie pour quel besoin, règles server actions, auth, Drizzle, tests, pièges de version. |
+| [`keyes-dxp-dotnet-react`](skills/keyes-dxp-dotnet-react/SKILL.md) | Stack ASP.NET Core (.NET 10) + SPA React (template officiel Microsoft, Vite) : quelle librairie pour quel besoin côté client, types API générés depuis OpenAPI, règles de sécurité et de state. |
 
 ## Installation
 
@@ -46,11 +47,15 @@ skills/
       new-project.md      # checklist de bootstrap
       server-actions.md   # next-safe-action, authActionClient
       data-fetching.md    # RSC, nuqs, TanStack Query, route handlers
-      forms.md            # TanStack Form + Zod
+      forms.md            # TanStack Form (createFormHook) + Zod
       ui-styling.md       # Tailwind v4, shadcn/ui, motion, charts
       auth-and-cms.md     # Better Auth vs PayloadCMS
       database.md         # Drizzle ORM
       testing.md          # Vitest + Playwright
+  keyes-dxp-dotnet-react/
+    SKILL.md              # tableau de décision + règles — chargé en premier
+    references/
+      forms.md            # TanStack Form (createFormHook) + Zod + erreurs ASP.NET
 ```
 
 Le `SKILL.md` reste court et actionnable ; les fichiers `references/` ne sont lus par
@@ -58,7 +63,7 @@ l'agent que lorsqu'il en a besoin.
 
 ## Contribuer
 
-Le but du skill `keyes-dxp-nextjs` est l'uniformité : **les mêmes packages dans toutes les
+Le but de ces skills est l'uniformité : **les mêmes packages dans toutes les
 apps**. Une modification de la stack se discute avant d'être committée.
 
 1. Une décision par ligne dans le tableau `Need → library`, avec la colonne « Do NOT use »
