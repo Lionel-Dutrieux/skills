@@ -56,6 +56,7 @@ skills/
     SKILL.md              # tableau de décision + règles — chargé en premier
     references/
       api-contract.md     # orval, contrat OpenAPI, ProblemDetails, drift check
+      backend.md          # minimal APIs, EF Core 10, Hangfire, Identity.Web, tests
       documentation.md    # site Fumadocs séparé, doc écrite vs dérivée du code
       forms.md            # TanStack Form (createFormHook) + Zod + erreurs ASP.NET
 ```
@@ -70,9 +71,13 @@ apps**. Une modification de la stack se discute avant d'être committée.
 
 1. Une décision par ligne dans le tableau `Need → library`, avec la colonne « Do NOT use »
    remplie — c'est elle qui empêche l'agent d'improviser.
-2. Le détail et les exemples de code vont dans `references/`, pas dans `SKILL.md`.
-3. Toute API qui a changé récemment va dans `references/version-gotchas.md`.
-4. Les exemples de code sont écrits pour la version réellement utilisée en production, pas
+2. Le détail et les exemples de code vont dans `references/`, pas dans `SKILL.md`. Règle de
+   découpage : ce dont **tous** les cas ont besoin reste dans `SKILL.md`, ce que seuls
+   **certains** cas atteignent part dans `references/` derrière un pointeur.
+3. Un pattern partagé par les deux skills (formulaires, shadcn/ui) se modifie **des deux
+   côtés** : ils s'installent séparément, donc chacun doit rester autonome.
+4. Toute API qui a changé récemment va dans `references/version-gotchas.md`.
+5. Les exemples de code sont écrits pour la version réellement utilisée en production, pas
    pour la dernière version lue dans un blog.
 
 ## Licence

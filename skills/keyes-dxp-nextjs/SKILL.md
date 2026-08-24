@@ -1,6 +1,6 @@
 ---
 name: keyes-dxp-nextjs
-description: Standard technology stack for the keyes-dxp team's React/Next.js applications. Consult BEFORE adding a dependency (pnpm add), choosing a library or technical approach, scaffolding a feature, or bootstrapping a project. Covers styling, UI components, forms, validation, data fetching, server actions, URL/global state, tables, charts, auth, CMS, database, i18n, dates, icons, animation, email, AI, testing and linting.
+description: Use in a React/Next.js app — before adding a dependency or picking a library, when bootstrapping a project, writing a form, fetching data, writing a server action, touching auth, PayloadCMS or the database, writing tests, or growing the docs site. The keyes-dxp standard stack. For an ASP.NET Core backend serving a Vite SPA, use keyes-dxp-dotnet-react instead.
 ---
 
 # keyes-dxp React/Next.js stack
@@ -30,7 +30,7 @@ between codebases without relearning. This document is the source of truth for
 | Styling | Tailwind CSS v4 | CSS modules, Sass, styled-components |
 | UI components | shadcn/ui | MUI, Chakra, Mantine, hand-rolled equivalents |
 | Conditional CSS classes | `cn()` (clsx + tailwind-merge, ships with shadcn/ui) | classnames, manual string concat |
-| Icons | `lucide-react` | react-icons, heroicons, FontAwesome |
+| Icons | `lucide-react` | react-icons, heroicons |
 | Command palette | `cmdk`, through shadcn/ui's `Command` | kbar |
 | Dark mode / theming | `next-themes` (shadcn/ui installs it — follow its dark mode docs) | custom ThemeProvider, manual class toggling |
 | Toasts / notifications | `sonner`, through shadcn/ui's `Sonner` | react-hot-toast, react-toastify |
@@ -73,17 +73,17 @@ client whose middleware verifies the session and permissions) — even when the 
 hides the action from unauthorized users. Authorization is enforced server-side, always.
 → `references/server-actions.md`
 
-**Validate at every boundary.** Any input crossing into your code — action inputs, route
-handler bodies, search params, webhook payloads, env vars — is parsed by a Zod schema
+**Parse every input at the boundary.** Anything crossing into your code — action inputs, route
+handler bodies, search params, webhook payloads, env vars — goes through a Zod schema
 before use. Infer TypeScript types from schemas (`z.infer`), never declare them twice.
 
-**Never edit anything in `components/ui/`.** Those files belong to the CLI:
-`pnpm dlx shadcn@latest add <component>` writes them, and `add --overwrite` is how we pull
-upstream fixes, accessibility patches and new variants. A local edit is silently lost on the
-next upgrade — or, worse, freezes the app on an old version because nobody dares re-run the
-CLI. Hand-writing a component shadcn/ui already provides is the same mistake.
+**Treat `components/ui/` as CLI-owned, and customize around it.** Those files are written by
+`pnpm dlx shadcn@latest add <component>` and re-fetched by `add --overwrite`, which is how the
+app receives upstream fixes, accessibility patches and new variants. Keeping them pristine is
+what keeps that upgrade path open; an edit made inside one is lost on the next `add`, or
+freezes the app on an old version because nobody dares re-run the CLI.
 
-Customize in this order instead:
+Customize in this order:
 
 1. **Theme tokens** — colors, radius, fonts in `app/globals.css` (`@theme`). Fixes "it doesn't look like us"
    everywhere at once, and is exactly what the primitives read.
@@ -91,8 +91,8 @@ Customize in this order instead:
    `className` (merged by `cn()`, so Tailwind conflicts resolve correctly).
 3. **Your own wrapper**, outside `components/ui/`, composing the primitive and adding your
    defaults, behaviour or extra `cva` variants. This is where app-specific components live.
-4. Only if none of the above can express it: fork the primitive into your own component with
-   a new name, and say so explicitly. Never by mutating the file in `components/ui/`.
+4. Only if none of the above can express it: fork the primitive into your own component under
+   a new name, and say so explicitly. The file in `components/ui/` stays untouched either way.
 
 **Prefer the server.** In the App Router, most "state" is not client state. Reach for
 Server Components first, then the URL (`nuqs`), then the TanStack Query cache. Adding a
