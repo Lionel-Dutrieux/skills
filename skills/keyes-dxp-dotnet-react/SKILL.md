@@ -112,6 +112,7 @@ ids have changed across .NET versions.
 | Unit / integration tests | Vitest (`*.int.spec.ts` for integration) | Jest, Mocha, Karma |
 | End-to-end tests | Playwright (`*.e2e.spec.ts`) | Cypress, Selenium, Puppeteer |
 | Lint + format | Biome (`biome check`) | ESLint, Prettier, oxlint, or any second linter running alongside |
+| Technical documentation | Fumadocs, in **its own Next.js project** beside the SPA (`web/<app>-docs`) — `references/documentation.md` | Docusaurus, MkDocs, MDX bolted onto the Vite SPA, a `docs/` folder of loose markdown, a hand-maintained HTML page |
 
 ## Hard rules — React client
 
@@ -186,6 +187,7 @@ user — that is a stack decision, not an implementation detail.
 | Unit tests | xunit.v3 + Shouldly | MSTest, NUnit, FluentAssertions |
 | Integration tests | `WebApplicationFactory` + Testcontainers against a real SQL Server | an in-memory provider, a shared developer database |
 | Architecture rules | NetArchTest, when the solution has layers worth pinning | a convention documented in a README and nowhere else |
+| API documentation for humans | `///` XML comments + `GenerateDocumentationFile`, rendered by the docs site | a reference page maintained by hand next to the code |
 
 **Project layout is deliberately still open.** Whether a solution is one WebApi project or
 split into `Domain` / `Application` / `Infrastructure` / `WebApi` (+ `Jobs`, `Modules`) is a
@@ -236,4 +238,5 @@ Read the relevant file before implementing — it contains the canonical code sh
 | File | Read it when |
 |---|---|
 | `references/api-contract.md` | Calling the API, regenerating the client, handling errors |
+| `references/documentation.md` | Writing or growing the documentation site |
 | `references/forms.md` | Building a form, a form field, or validating user input |

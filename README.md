@@ -56,6 +56,7 @@ skills/
     SKILL.md              # tableau de décision + règles — chargé en premier
     references/
       api-contract.md     # orval, contrat OpenAPI, ProblemDetails, drift check
+      documentation.md    # site Fumadocs séparé, doc écrite vs dérivée du code
       forms.md            # TanStack Form (createFormHook) + Zod + erreurs ASP.NET
 ```
 

@@ -56,6 +56,7 @@ between codebases without relearning. This document is the source of truth for
 | i18n | `next-intl` | react-i18next, next-i18next |
 | Dates | `date-fns` | moment, dayjs, Luxon |
 | Email templates | `react-email` | hand-written HTML templates |
+| Technical documentation | Fumadocs, **embedded in the Next.js app** (`content/docs/**`, a `(fumadocs)` route group) | Docusaurus, MkDocs, a separate docs app, a `docs/` folder of loose markdown, a Confluence page as the source of truth |
 | AI / agents / LLM | Vercel AI SDK; chat UI → AI Elements | LangChain, hand-rolled LLM HTTP calls, custom chat UI |
 | Multi-source file handling | Files SDK — rare, see rules below | custom storage abstraction layers |
 | Unit / integration tests | Vitest (`*.int.spec.ts` for integration) | Jest, Mocha |
@@ -109,6 +110,13 @@ Server Components first, then the URL (`nuqs`), then the TanStack Query cache. A
   plain upload does not justify it.
 - **Charts** → use the shadcn/ui chart components. Only drop to raw Recharts if the
   shadcn wrapper genuinely cannot express the chart, and say so explicitly.
+- **Fumadocs** → pages are MDX under `content/docs/**`; adding one never means touching the
+  route under `src/app/(fumadocs)/`. `meta.json` both **orders and filters** the sidebar — a
+  file missing from `pages[]` is invisible even though it builds, and a new sub-folder must be
+  listed in its parent's `pages[]` too. Two rules govern the content: a concept is documented
+  **once** and linked to elsewhere, and anything trivially derivable from the code or the types
+  earns no page. If the repo ships its own docs-authoring skill, follow it — it wins over this
+  paragraph.
 
 ## References
 
