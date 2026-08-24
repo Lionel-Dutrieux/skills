@@ -15,7 +15,22 @@ uniquement quand la tâche correspond.
 
 ## Installation
 
-Via le CLI [`skills`](https://github.com/vercel-labs/skills) :
+### En plugin Claude Code (recommandé)
+
+Le repo est sa propre marketplace : les deux skills arrivent ensemble, et
+`claude plugin update` les garde à jour.
+
+```bash
+claude plugin marketplace add Lionel-Dutrieux/skills
+claude plugin install keyes-dxp-skills@keyes-dxp
+```
+
+Depuis une session, `/plugin` fait la même chose de façon interactive.
+
+### Via le CLI `skills` (agent au choix)
+
+Pour Codex, Cursor ou une copie éditable dans le projet, le CLI
+[`skills`](https://github.com/vercel-labs/skills) :
 
 ```bash
 # dans un projet, pour l'agent détecté automatiquement
@@ -33,12 +48,16 @@ Le repo est public : aucun accès git particulier n'est nécessaire pour l'insta
 ### Mise à jour
 
 ```bash
-npx skills update
+claude plugin update keyes-dxp-skills   # installation par plugin
+npx skills update                       # installation par le CLI skills
 ```
 
 ## Structure
 
 ```
+.claude-plugin/
+  plugin.json           # manifeste du plugin
+  marketplace.json      # le repo est sa propre marketplace
 skills/
   keyes-dxp-nextjs/
     SKILL.md              # tableau de décision + règles — chargé en premier
