@@ -1,0 +1,4 @@
+# Managed by the keyes-dxp `typescript` skill. Change the skill, then re-sync: never edit this copy.
+# LF everywhere, whatever the contributor's core.autocrlf: Prettier writes LF, and a CRLF
+# checkout would show every file as modified.
+* text=auto eol=lf
