@@ -7,11 +7,11 @@
   "description": "keyes-dxp team skills, as an installable Claude Code plugin.",
   "plugins": [
     {
-      "name": "keyes-dxp-skills",
+      "name": "keyes-dxp",
       "source": "./",
-      "description": "Standard technology stacks for the keyes-dxp team: React/Next.js, and ASP.NET Core (.NET 10) serving a React SPA.",
+      "description": "keyes-dxp conventions for TypeScript, React, Next.js and Payload apps: stack choices, configs, naming and folder structure.",
       "category": "engineering",
-      "keywords": ["nextjs", "react", "dotnet", "stack"]
+      "keywords": ["typescript", "react", "nextjs", "payload", "conventions"]
     }
   ]
 }
