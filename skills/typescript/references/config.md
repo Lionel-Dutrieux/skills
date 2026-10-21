@@ -44,8 +44,13 @@ and `.prettierignore` paths take the app's prefix (`apps/web/src/components/ui`)
   `src/app/(payload)/admin/importMap.js`, `src/migrations` — Payload writes them
 - `package.json` has `"type": "module"`. An app also gets the `@payload-config` path
   (`"./src/payload.config.ts"`) in `tsconfig.json`, and `withPayload(…)` as the outermost
-  wrapper of `next.config.ts`. ESLint spreads `payload` in an app, `payloadPlugin` in a
-  plugin package.
+  wrapper of `next.config.ts`. ESLint spreads `payload` in an app.
+
+### `payload-plugin` — the project is a Payload plugin package
+
+- **Copy to `.config/keyes-dxp/`**: `eslint-payload-plugin.mjs` (from
+  `payload-plugin/assets/`); ESLint spreads `payloadPlugin` after `typescript` and `react`.
+- `package.json` has `"type": "module"`; `tsconfig.json` sets `NodeNext`.
 
 ## Steps
 

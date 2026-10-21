@@ -16,7 +16,8 @@ pointeur l'y envoie.
 | [`typescript`](skills/typescript/SKILL.md) | Le socle : stack, config ESLint/Prettier/tsconfig, nommage, erreurs, Zod aux frontières, logs, dates, tests, monorepo | — |
 | [`react`](skills/react/SKILL.md) | Composants, design system shadcn, formulaires TanStack Form, état | `typescript` |
 | [`nextjs`](skills/nextjs/SKILL.md) | App Router : structure de `src/`, DAL, server actions, listes SSR, cache, env, i18n, observabilité | `react` |
-| [`payload`](skills/payload/SKILL.md) | Payload : base de données, territoire et nommage, migrations, nos plugins, écriture de plugins | `typescript` |
+| [`payload`](skills/payload/SKILL.md) | Payload dans une app : base de données, territoire et nommage, migrations, nos plugins | `typescript` |
+| [`payload-plugin`](skills/payload-plugin/SKILL.md) | Écrire un plugin Payload (repo payload-plugins) : anatomie, options, fusion, accès, erreurs, package, tests, docs | `typescript`, `payload` |
 
 **Les paquets à utiliser** sont dans le tableau `Stack` en tête de chaque `SKILL.md`, du
 socle vers le framework : [`typescript`](skills/typescript/SKILL.md#stack) (outillage,
