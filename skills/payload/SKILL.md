@@ -1,6 +1,6 @@
 ---
 name: payload
-description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; choosing one of our Payload plugins; setting up the CMS app of a headless repo; or writing a Payload plugin.
+description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; choosing one of our Payload plugins; or setting up the CMS app of a headless repo. Writing a plugin package: the `payload-plugin` skill.
 ---
 
 # keyes-dxp Payload
@@ -100,7 +100,6 @@ secret both sides share. The front's side: `nextjs` skill, `references/headless.
 |---|---|
 | `references/migrations.md` | The schema changes |
 | `references/testing.md` | Testing against Payload: Local API, access rules, hooks, jobs |
-| `references/plugin-authoring.md` | Writing a Payload plugin |
 
 The ESLint layer is `assets/eslint-payload.mjs`, synced as `typescript`'s
 `references/config.md` describes.

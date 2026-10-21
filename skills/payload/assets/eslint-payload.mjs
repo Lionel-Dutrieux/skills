@@ -29,11 +29,3 @@ export const payload = [
     rules: payloadNaming,
   },
 ]
-
-// A plugin package: Payload's territory from top to bottom, like the official plugin template.
-export const payloadPlugin = [
-  {
-    files: ['src/**'],
-    rules: payloadNaming,
-  },
-]
