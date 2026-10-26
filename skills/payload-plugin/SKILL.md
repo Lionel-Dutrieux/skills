@@ -29,7 +29,7 @@ Files are kebab-case (`resolve-account.ts`), components PascalCase (`AuditTabVie
 ```
 index.ts          server entry: the plugin, its option types, its helpers; never a component
 plugin.ts         definePlugin
-options.ts        resolveOptions and the plugin's single fail()
+options.ts        resolveOptions, and fail = failure('<Name> plugin') from the kit
 types.ts          the public option types
 translations.ts   en and fr, namespace = slug, mergeTranslations()
 components/       admin components; `Name.tsx` (server) and `NameClient.tsx` ('use client')
@@ -49,11 +49,21 @@ export const auditLogsPlugin = definePlugin<AuditLogsPluginConfig>({
 
 No `order`, unless two plugins truly depend on each other's output.
 
+## The kit
+
+`@lionel-dutrieux/payload-kit` (`packages/kit`) holds what two plugins or more share; a
+plugin lists it as a regular dependency. Reach for it before writing a helper: options
+checks (`failure`, `refuseUnknown`, `isPlainObject`, `quoted`), access (`noOne`,
+`adminUsers`, `signedInAdminUser`), plugin write guards, job and retention helpers,
+advisory locks, and the tenant helpers. A helper moves into the kit when a second plugin
+needs it. Its README lists every export.
+
 ## Rules
 
-- **Options are resolved at boot.** `resolveOptions` refuses unknown keys, checks every
+- **Options are resolved at boot.** `resolveOptions` refuses unknown keys with the kit's
+  `refuseUnknown` (`unknown option "jobs.queue"; expected "jobs.autoRun".`), checks every
   value's type (`disabled` included), applies defaults and returns a `ResolvedOptions`.
-  Every error goes through the plugin's one `fail()`, saying what to fix.
+  Every error goes through the plugin's `fail`, saying what to fix.
 - **A slug or route already taken by the host is an error**, checked before anything is
   added. The plugin never replaces what the host declared.
 - **Merge, never overwrite.** The host's hooks, collections, endpoints and
@@ -64,8 +74,17 @@ No `order`, unless two plugins truly depend on each other's output.
   migrations match between environments. Endpoints, acting hooks, admin UI and `onInit`
   switch off.
 - **Closed by default.** Every collection and every field the plugin owns declares its
-  `access`: `noOne` for writes, `options.access.read ?? noOne` for reads. `admin.readOnly`
-  is a UI hint, not access. The host widens through `<thing>Overrides`.
+  `access`, `readVersions` and `unlock` included: `noOne` for writes,
+  `options.access.read ?? adminUsers(config.admin.user)` for reads — the admin's users,
+  never any auth collection. `admin.readOnly` is a UI hint, not access. The host widens
+  through `<thing>Overrides`.
+- **The plugin's own writes** (deliveries, a journal) pass the kit's `pluginWriteGuard`,
+  whose state lives on the runtime object the plugin puts on `config.custom`: Next can
+  load the plugin's modules twice, and a `req.context` flag is any caller's to set.
+- **The schema depends on no option.** A list the options or the host's collections
+  decide is a `text` field with validation, not a `select`: each new value of a `select`
+  is a Postgres enum migration.
+- **Ids carry no order.** Hosts use UUIDs: sort and paginate by a timestamp, then `id`.
 - **No environment variable.** Configuration arrives through options; secrets through
   functions the host provides (`secret: () => …`).
 - **Errors**: configuration → `fail()` at boot. A refusal over HTTP → an `APIError`
@@ -74,12 +93,15 @@ No `order`, unless two plugins truly depend on each other's output.
 - **Logs**: `payload.logger` / `req.payload.logger` with the plugin's prefix. `console`
   only in a CLI.
 - **Admin components are referenced by path** (`'@lionel-dutrieux/payload-<name>/rsc#Name'`),
-  never imported from the server entry.
+  never imported from the server entry. They are native Payload UI: `@payloadcms/ui`
+  components, Payload's CSS variables, styles in a CSS file under
+  `@layer payload-default`, Payload's icons and never an emoji.
 
 ## References
 
 | File | Read it when |
 |---|---|
+| `references/security.md` | Storing data per tenant, building a URL or link, adding an endpoint |
 | `references/package.md` | Editing `package.json`, exports, peers, a CLI, a `./next` entry |
 | `references/testing.md` | Writing the plugin's tests |
 | `references/docs.md` | Writing the README, `CONTEXT.md` or an ADR |
