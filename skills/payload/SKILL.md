@@ -56,8 +56,8 @@ Slugs are kebab-case: `slug: 'blog-posts'`.
   the transaction.
 - **An effect outside the database runs in a job.** An email, an HTTP call, a push: the
   `after*` hook queues a task with `req`; the task is idempotent and does nothing when
-  its target is gone. An email is a react-email template sent with `payload.sendEmail`,
-  through the email adapter the config declares.
+  its target is gone. An email is an Email Type of the `email` plugin, sent with the
+  `send` its `defineEmails` returns, through the email adapter the config declares.
 - **The Next.js cache is invalidated by the `revalidate` plugin**, from the tags the site
   reads. Collections carry no hand-written revalidation hook; with Payload embedded and
   nothing cached, there is nothing to invalidate.
@@ -79,13 +79,21 @@ says `@lionel-dutrieux:registry=https://npm.pkg.github.com`; the token
 | Need | Plugin |
 |---|---|
 | Audit trail of changes, publishes and sign-ins | `audit-logs` |
+| Cookie consent banner, consent records, scripts loaded on consent | `consent` |
+| Moving content between instances (staging to production) | `content-sync` |
+| Templated emails edited in the admin, and the log of every email sent | `email` |
+| Server errors captured in the admin, for a project with no Sentry | `errors` |
+| Typed notifications routed by rules to email, Teams or the host's channels | `notifications` |
 | Sign-in through an OpenID Connect provider | `oidc` |
 | Review and approval before publishing | `publishing-workflows` |
 | Invalidating the Next.js cache when content goes public | `revalidate` |
 | Reference data and demo content, typed and idempotent | `seed` |
+| Synchronising collections with Azure Service Bus topics | `service-bus` |
+| The domains each tenant of a multi-tenant project is reached on | `tenant-domains` |
 | Editors overriding the front's next-intl messages | `translations` |
 
-Each plugin's README documents its options.
+Each plugin's README documents its options, and in its section on tenants how it scopes
+by tenant under `@payloadcms/plugin-multi-tenant`.
 
 ## The CMS of a headless repo
 
