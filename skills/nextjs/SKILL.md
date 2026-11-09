@@ -1,6 +1,6 @@
 ---
 name: nextjs
-description: Next.js App Router conventions for keyes-dxp apps, with Payload embedded or as a headless front. Use when adding a route, page, layout, route handler, server action or data read; organizing src/ or a feature folder; caching or revalidating; or touching env vars, i18n, next.config, instrumentation or logging.
+description: Next.js App Router conventions for keyes-dxp apps, with Payload embedded or as a headless front. Use when adding a route, page, layout, route handler, server action or data read; creating a feature or organizing src/; caching or revalidating; adding a language, a translation key or any text shown to a visitor; or touching env vars, next-intl, next.config, instrumentation or logging.
 ---
 
 # keyes-dxp Next.js
@@ -45,23 +45,42 @@ src/
   features/<feature>/  everything else of each feature
   components/          ui/ (shadcn CLI), form/ (form kit), components shared by features
   lib/                 safe-action.ts, utils.ts, hooks/, logger.ts (without Payload)
-  i18n/request.ts
-  env.ts  instrumentation.ts  proxy.ts
+  i18n/                routing.ts, navigation.ts, request.ts → references/i18n.md
+  env.ts  instrumentation.ts  proxy.ts  global.d.ts
+messages/<locale>.json  the words, beside src/, not in it
 ```
 
-Payload's own folders sit beside these (`payload` skill). A feature:
+Payload's own folders sit beside these (`payload` skill), with `src/plugins/` for the
+plugins a project wires.
+
+## A feature
+
+One way to build a feature, in every project. A feature is a part of the product, named
+in kebab-case after what it is about (`posts`, `contact-form`, `tenants`), not after a
+layer:
 
 ```
 features/<feature>/
-  components/   its UI; <feature>-screen.tsx is what the page renders
-  data/         its DAL, every file starting with `import 'server-only'`
-  actions.ts    its server actions
-  schemas.ts    the Zod schemas its forms and actions share
-  lib/          pure helpers, hooks (use-*.ts), TanStack Query options (queries.ts)
+  components/        its UI; <feature>-screen.tsx is what the page renders
+  data/<thing>.ts    its DAL, every file starting with `import 'server-only'`, handing out DTOs
+  actions.ts         its server actions (actions/<verb>.ts once it holds many)
+  schemas.ts         the Zod schemas its forms and actions share
+  lib/               pure helpers, hooks (use-*.ts), TanStack Query options (queries.ts)
 ```
 
-A file used by one feature lives in that feature. It moves up to `src/components/` or
-`src/lib/` when a second feature needs it.
+- **`data/`, never `server/`, `services/` or `repositories/`.** Those names say where code
+  runs or name a pattern, not what the folder holds. `data/` is the only folder that
+  reads, and the only one `server-only` guards; actions run on the server too, and live
+  in `actions.ts`.
+- **No generic repository.** One `createCollectionRepository` for every collection drifts
+  into `overrideAccess: true` for anonymous reads and a hand-made `unstable_cache` whose
+  key forgets the user. Each read is a named function of the feature's `data/`, with its
+  actor.
+- **A feature uses another through its `data/` (server side) or its `components/`**, never
+  its `lib/` internals. The tenant of a request, for instance, is `requestTenant()` in
+  `features/tenants/data/`.
+- **A file used by one feature lives in that feature.** It moves up to `src/components/`
+  or `src/lib/` when a second feature needs it.
 
 ## The page is a door
 
@@ -134,9 +153,24 @@ image runs in several environments.
 
 ## i18n
 
-next-intl. Keys in English, in `messages/<locale>.json`. `src/i18n/request.ts` sets the
-locale, the messages and the `timeZone`, and dates are formatted with next-intl's
-formatter. The URL carries a locale segment only when the app ships several locales.
+next-intl from the first page, even with one language: a second one is then one more
+file, not a hunt for strings.
+
+- **Where**: the words in `messages/<locale>.json` at the root. `src/i18n/routing.ts`
+  holds the locales, `navigation.ts` the `Link`, `redirect` and `useRouter` that internal
+  links use, `request.ts` the locale, messages and `timeZone`. With one language,
+  `request.ts` alone, and no locale segment in the URL.
+- **Keys**: in English, one top-level namespace per feature (`posts.title`), `common` for
+  what several features share.
+- **Typed**: `AppConfig` in `src/global.d.ts` types the messages and the locales, so a key
+  missing from the default locale fails `tsc`. A unit test checks that every locale has
+  the same keys and the same ICU placeholders.
+- **No word in a component.** The site's words are in `messages/`; the admin's in
+  Payload's `i18n.translations` and the plugins' `translations.ts`. Editors override the
+  site's through the `translations` plugin.
+- **Dates** go through next-intl's formatter, in the app's `timeZone`.
+
+→ `references/i18n.md`
 
 ## Observability
 
@@ -159,6 +193,7 @@ unexpected error logged once → `references/observability.md`.
 | `references/data.md` | Writing a read: DAL, DTO, actor, TanStack Query, route handler |
 | `references/lists.md` | Building a list with search, filters, sort or pagination |
 | `references/mutations.md` | Writing a server action, or handling what it returns |
+| `references/i18n.md` | Setting up next-intl, adding a language or a key, typing the messages |
 | `references/headless.md` | Working in `apps/web` of a headless repo |
 | `references/observability.md` | Logging, tracing or reporting an error |
 | `references/docs.md` | Writing the technical documentation (Fumadocs) |
