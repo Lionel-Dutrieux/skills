@@ -32,7 +32,9 @@ plugin.ts         definePlugin
 options.ts        resolveOptions, and fail = failure('<Name> plugin') from the kit
 types.ts          the public option types
 translations.ts   en and fr, namespace = slug, mergeTranslations()
-components/       admin components; `Name.tsx` (server) and `NameClient.tsx` ('use client')
+components/       admin components; a server one and its 'use client' half are `Name.tsx` and
+                  `NameClient.tsx` (or `NameField.tsx` for a field), a component with no server
+                  half keeps its own name
 exports/          client.ts, rsc.ts, types.ts — and next.ts for a front-end entry
 <domain>/         one folder per concern once src/ grows (capture/, sinks/, jobs/…)
 ```
@@ -61,13 +63,15 @@ needs it. Its README lists every export.
 ## Rules
 
 - **Options are resolved at boot.** `resolveOptions` refuses unknown keys with the kit's
-  `refuseUnknown` (`unknown option "jobs.queue"; expected "jobs.autoRun".`), checks every
+  `refuseUnknown` (or a Zod `strictObject` for a deep option tree) (`unknown option "jobs.queue"; expected "jobs.autoRun".`), checks every
   value's type (`disabled` included), applies defaults and returns a `ResolvedOptions`.
   Every error goes through the plugin's `fail`, saying what to fix.
 - **A slug or route already taken by the host is an error**, checked before anything is
   added. The plugin never replaces what the host declared.
 - **Merge, never overwrite.** The host's hooks, collections, endpoints and
-  `admin.components` come first and the plugin's after; the host's `onInit` runs first.
+  `admin.components` come first and the plugin's after; the host's `onInit` runs first. A
+  hook that guards what the plugin owns (stripping a system field before the host's
+  hooks see it) runs first, with a comment saying why.
   A host value of `false` (`endpoints: false`) stays `false`. Translations:
   `deepMergeSimple(translations, incoming.translations)`, so the project wins.
 - **`disabled` keeps the schema**: collections, fields, job tasks and translations stay, so
@@ -90,8 +94,14 @@ needs it. Its README lists every export.
 - **Errors**: configuration → `fail()` at boot. A refusal over HTTP → an `APIError`
   subclass with its status and a translated message, or Payload's `Forbidden` /
   `NotFound`. Codes, not sentences, cross the wire.
-- **Logs**: `payload.logger` / `req.payload.logger` with the plugin's prefix. `console`
-  only in a CLI.
+- **Logs**: `payload.logger` / `req.payload.logger` with the plugin's prefix, the error as
+  `{ err }` so its stack is kept. `console` only in a CLI.
+- **The site's cached reads** (settings, themes, messages, routes) go through Next's cache
+  under the tags the `revalidate` plugin emits for the documents read, tested against its
+  `createTags`. The plugin invalidates nothing itself, and warns at startup through
+  `payload.logger` when `custom.revalidate` does not cover what it reads. A time-to-live
+  is at most an opt-in, off by default, never the invalidation. A lookup Payload keeps for
+  itself, read outside Next too (tenant-domains' map of domains), may stay in memory.
 - **Admin components are referenced by path** (`'@lionel-dutrieux/payload-<name>/rsc#Name'`),
   never imported from the server entry. They are native Payload UI: `@payloadcms/ui`
   components, Payload's CSS variables, styles in a CSS file under

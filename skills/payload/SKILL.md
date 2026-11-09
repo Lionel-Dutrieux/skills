@@ -60,6 +60,9 @@ follow the `blocks` plugin, one kebab-case folder per block.
   operation; Payload's default lets any signed-in user do everything. With the `roles`
   plugin it is declared in `src/roles.ts`, and Payload refuses to start when a collection
   escapes it; without it, the logic lives in `src/access/`, never inline.
+- **A block's `block.ts` is territory; its `renderer.ts`, `view.tsx` and `load.ts` are
+  the site's code**: they may call a feature's `data/`, and the blocks plugin hands a view
+  its document and the request's context (Payload included) by design.
 - **The territory never imports `data/`.** The DAL is for application code. A hook or a
   task works through `req.payload`, and passes `req` to every nested call so it shares
   the transaction.
