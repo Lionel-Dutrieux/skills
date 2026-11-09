@@ -1,6 +1,6 @@
 ---
 name: payload
-description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; choosing one of our Payload plugins; or setting up the CMS app of a headless repo. Writing a plugin package: the `payload-plugin` skill.
+description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins (roles, routes, blocks, settings, themes, forms, email, SEO, translations, multi-tenancy and more) or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo. Writing a plugin package: the `payload-plugin` skill.
 ---
 
 # keyes-dxp Payload
@@ -9,7 +9,9 @@ Load first: `typescript`. How Payload works — collections, fields, hooks, acce
 API: the official `payload` skill and the installed `.d.ts`. This skill holds our choices
 on top. Application code reaching Payload: `nextjs` skill.
 
-Payload 3, embedded in Next.js.
+Payload 3, embedded in Next.js. A project is multi-tenant from the start, even with one
+tenant: Payload's official `@payloadcms/plugin-multi-tenant` and our `tenant-domains`.
+Adding tenancy later means migrating all the content.
 
 ## The database
 
@@ -33,24 +35,29 @@ src/
   collections/Posts/index.ts                 a folder per collection, PascalCase
   collections/Posts/hooks/populateAuthors.ts one hook per file, camelCase, named for its effect
   globals/Header/index.ts
-  blocks/CallToAction/config.ts              + Component.tsx when the front renders it
+  blocks/call-to-action/block.ts             + renderer.ts, view.tsx: the blocks plugin's layout
   fields/link.ts                             reusable field factories
   access/authenticated.ts                    one access function per file
   hooks/populatePublishedAt.ts               hooks shared by several collections
   jobs/sendWelcomeEmail.ts                   one task per file
   migrations/                                written by `payload migrate:create`
+  plugins/audit-logs.ts                      one file per optional plugin, all it touches
+  roles.ts                                   the roles plugin's roles and access
+  tenancy.ts                                 the tenants, for multi-tenant and tenant-domains
   seeds.ts                                   the seed plugin's definitions
   payload.config.ts
   payload-types.ts                           generated
 ```
 
-Slugs are kebab-case: `slug: 'blog-posts'`.
+Slugs are kebab-case: `slug: 'blog-posts'`. Blocks are the exception to PascalCase: they
+follow the `blocks` plugin, one kebab-case folder per block.
 
 ## Rules
 
 - **Access is closed explicitly.** Every collection and global declares `access` for each
-  operation; Payload's default lets any signed-in user do everything. The logic lives in
-  `src/access/`, never inline.
+  operation; Payload's default lets any signed-in user do everything. With the `roles`
+  plugin it is declared in `src/roles.ts`, and Payload refuses to start when a collection
+  escapes it; without it, the logic lives in `src/access/`, never inline.
 - **The territory never imports `data/`.** The DAL is for application code. A hook or a
   task works through `req.payload`, and passes `req` to every nested call so it shares
   the transaction.
@@ -76,24 +83,50 @@ Published on GitHub Packages as `@lionel-dutrieux/payload-<name>`. The project's
 says `@lionel-dutrieux:registry=https://npm.pkg.github.com`; the token
 (`read:packages`) lives in the user's `~/.npmrc`, never in the repo.
 
+Before writing code for a need, look here: it is often a plugin already, tested, secured,
+multi-tenant and cached the way the others are. Writing it again by hand means a second
+way of doing what the rest of the project does one way.
+
 | Need | Plugin |
 |---|---|
-| Audit trail of changes, publishes and sign-ins | `audit-logs` |
-| Cookie consent banner, consent records, scripts loaded on consent | `consent` |
-| Moving content between instances (staging to production) | `content-sync` |
-| Templated emails edited in the admin, and the log of every email sent | `email` |
-| Server errors captured in the admin, for a project with no Sentry | `errors` |
+| Roles per tenant and the access of every collection, global and field | `roles` |
+| The domains each tenant is reached on, resolved from the request's `Host` | `tenant-domains` |
+| Settings groups edited in the admin, locked from code, secrets encrypted | `settings` |
+| Localized routes, links, locale switcher, hreflang and sitemap on next-intl | `routes` |
+| Blocks with their views and settings in one folder, a typed registry | `blocks` |
+| Site themes as typed tokens rendered as CSS variables | `themes` |
+| Metadata, robots, sitemap per tenant and structured data | `seo` |
+| Fields Payload lacks: link, URL, color, icon, phone, encrypted secret | `fields` |
+| Forms built in the admin, anti-bot, uploads, a headless TanStack Form renderer | `forms` |
+| Templated emails (React Email) sent through SMTP, Azure or Payload's adapter | `email` |
 | Typed notifications routed by rules to email, Teams or the host's channels | `notifications` |
-| Sign-in through an OpenID Connect provider | `oidc` |
-| Review and approval before publishing | `publishing-workflows` |
-| Invalidating the Next.js cache when content goes public | `revalidate` |
-| Reference data and demo content, typed and idempotent | `seed` |
-| Synchronising collections with Azure Service Bus topics | `service-bus` |
-| The domains each tenant of a multi-tenant project is reached on | `tenant-domains` |
 | Editors overriding the front's next-intl messages | `translations` |
+| Machine translation of a document's localized content, as drafts | `content-translation` |
+| Invalidating the Next.js cache when content goes public | `revalidate` |
+| Review and approval before publishing | `publishing-workflows` |
+| Automations built in the admin: triggers, conditions, waits, actions | `automations` |
+| One AI provider per project or tenant, and a runtime other plugins call | `ai` |
+| Audit trail of changes, publishes and sign-ins | `audit-logs` |
+| Server errors captured in the admin, for a project with no Sentry | `errors` |
+| Cookie consent banner, consent records, scripts loaded on consent | `consent` |
+| Sign-in through an OpenID Connect provider | `oidc` |
+| Moving content between instances (staging to production) | `content-sync` |
+| Synchronising collections with Azure Service Bus topics | `service-bus` |
+| Reference data and demo content, typed and idempotent | `seed` |
 
-Each plugin's README documents its options, and in its section on tenants how it scopes
-by tenant under `@payloadcms/plugin-multi-tenant`.
+**Read a plugin's documentation before using it**, never memory: each package ships it as
+one Markdown file, `node_modules/@lionel-dutrieux/payload-<name>/llms.md` (options,
+exports, how it scopes by tenant, its limits), and its types in `dist/**/*.d.ts`. Our
+plugins are recent and change; what you remember of them is likely wrong.
+
+They are built to work together: `roles` closes the access of what the others add,
+`tenant-domains` gives them the tenant of a request, the site's cached reads (settings,
+themes, translations, routes) are invalidated by `revalidate`. A plugin left out of a
+project removes cleanly: its file in `src/plugins/`, its lines, its dependency.
+
+**A new project** starts from `pnpm create @lionel-dutrieux/app`: the `website` template
+(a complete multi-tenant site with every plugin wired) or `blank` (users, media, tenants).
+Its `AGENTS.md` says where things are; follow it over this skill where they differ.
 
 ## The CMS of a headless repo
 

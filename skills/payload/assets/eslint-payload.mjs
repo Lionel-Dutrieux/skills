@@ -1,7 +1,8 @@
 // Managed by the keyes-dxp `payload` skill. Change the skill, then re-sync: never edit this copy.
 
-// Payload's territory, named as Payload's official templates name it.
-const territory = ['collections', 'globals', 'blocks', 'fields', 'access', 'hooks', 'jobs']
+// Payload's territory, named as Payload's official templates name it. Blocks are not in
+// it: they follow the blocks plugin's kebab-case folders, as the rest of `src/` does.
+const territory = ['collections', 'globals', 'fields', 'access', 'hooks', 'jobs']
 
 const payloadNaming = {
   'check-file/filename-naming-convention': [
@@ -9,7 +10,7 @@ const payloadNaming = {
     { '**/*.ts': 'CAMEL_CASE', '**/*.tsx': 'PASCAL_CASE' },
     { ignoreMiddleExtensions: true },
   ],
-  // Collection, global and block folders are PascalCase (`collections/Posts/`).
+  // Collection and global folders are PascalCase (`collections/Posts/`).
   'check-file/folder-naming-convention': 'off',
 }
 
