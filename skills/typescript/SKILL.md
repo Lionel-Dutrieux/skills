@@ -19,12 +19,17 @@ the skill.
 | Package manager | pnpm |
 | Runtime | Node 24 |
 | Language | TypeScript 6.0 — the highest version typescript-eslint supports |
-| Lint and format | ESLint 10 + Prettier, through the synced config |
+| Lint and format | ESLint 10 + Prettier, through the synced config; oxlint + oxfmt in the payload-plugins repo and the projects `create-app` generates |
 | Validation | Zod 4 |
 | HTTP | the native `fetch` |
 | Logging | pino |
 | Dates | date-fns 4 + `@date-fns/tz` |
 | Tests | Vitest 5 and Playwright |
+
+The payload-plugins repo and the projects `create-app` generates take their versions from
+that repo's catalog (`pnpm-workspace.yaml`), and their lint and format from oxlint and
+oxfmt, as Payload's own repository does: their `.oxlintrc.json` and `.oxfmtrc.json` are
+the config there, and the rules below hold through them.
 | LLM calls | Vercel AI SDK (`ai`) |
 
 A need with no row: ask the user which library to use, then propose adding the row.
@@ -58,7 +63,8 @@ file names, no `console`, no `export *`, and `noUncheckedIndexedAccess`.
 
 Everything that enters the code — action input, form data, search params, a route handler
 body, a webhook, an env var, a third-party response — is parsed by a Zod schema before
-use. Types come from the schema with `z.infer`, declared once. Zod 4 puts formats at the
+use. A file the package itself ships and reads back (a manifest it embeds, its own build
+output) is not a boundary. Types come from the schema with `z.infer`, declared once. Zod 4 puts formats at the
 top level (`z.email()`, `z.uuid()`) and customizes messages through a single `error`
 parameter.
 

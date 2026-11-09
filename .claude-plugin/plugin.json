@@ -1,7 +1,7 @@
 {
   "name": "keyes-dxp",
   "displayName": "keyes-dxp",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "keyes-dxp conventions for TypeScript, React, Next.js and Payload apps: stack choices, configs, naming and folder structure.",
   "author": {
     "name": "Lionel Dutrieux",
