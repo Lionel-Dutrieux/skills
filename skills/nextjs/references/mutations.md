@@ -51,7 +51,7 @@ A business refusal (not enough credit, a slot already taken) is part of the resu
 
 | The page shows | Call |
 |---|---|
-| Data read without cache (`next-payload`) | `refresh()` |
+| Data read for the user, without cache | `refresh()` |
 | Cached data, and the user must see their change now | `updateTag(tag)` |
 | Cached data, where a stale read is acceptable | `revalidateTag(tag, 'max')` |
 | Another page | `redirect(href)`, after the cache update |

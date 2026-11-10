@@ -71,8 +71,8 @@ follow the `blocks` plugin, one kebab-case folder per block.
   its target is gone. An email is an Email Type of the `email` plugin, sent with the
   `send` its `defineEmails` returns, through the email adapter the config declares.
 - **The Next.js cache is invalidated by the `revalidate` plugin**, from the tags the site
-  reads. Collections carry no hand-written revalidation hook; with Payload embedded and
-  nothing cached, there is nothing to invalidate.
+  caches its reads under. Collections carry no hand-written revalidation hook, and every
+  collection or global a cached read tags is listed in `revalidatePlugin`.
 - **SQL is the exception.** The Local API first. Drizzle only for what it cannot express —
   a row lock, an aggregate, `on conflict`, a set-based write — through
   `payload.db.drizzle` over the generated tables, with the reason in a comment.
@@ -125,8 +125,9 @@ exports, how it scopes by tenant, its limits), and its types in `dist/**/*.d.ts`
 plugins are recent and change; what you remember of them is likely wrong.
 
 They are built to work together: `roles` closes the access of what the others add,
-`tenant-domains` gives them the tenant of a request, the site's cached reads (settings,
-themes, translations, routes) are invalidated by `revalidate`. A plugin left out of a
+`tenant-domains` gives them the tenant of a host, and what the site caches of their reads
+(settings, themes, translations, routes), under the tags they name, is invalidated by
+`revalidate`. A plugin left out of a
 project removes cleanly: its file in `src/plugins/`, its lines, its dependency.
 
 **A new project** starts from `pnpm create @lionel-dutrieux/app`: the `website` template

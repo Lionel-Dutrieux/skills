@@ -77,7 +77,7 @@ features/<feature>/
   key forgets the user. Each read is a named function of the feature's `data/`, with its
   actor.
 - **A feature uses another through its `data/` (server side) or its `components/`**, never
-  its `lib/` internals. The tenant of a request, for instance, is `requestTenant()` in
+  its `lib/` internals. The tenant of a page, for instance, is `requestTenant()` in
   `features/tenants/data/`.
 - **A file used by one feature lives in that feature.** It moves up to `src/components/`
   or `src/lib/` when a second feature needs it.
@@ -134,16 +134,39 @@ updates the cache and returns what the UI needs. → `references/mutations.md`
 
 ## Caching
 
-- `next-payload`: Cache Components off. After a write, the action calls `refresh()`.
-- `next-headless`: Cache Components on. Public DAL reads are `'use cache'` with a
-  `cacheTag`, and the CMS invalidates them. Turning it on in an existing app: the official
-  `next-cache-components-adoption` skill.
+Cache Components are on in both shapes.
+
+- **Never `unstable_cache`.** Next 16 replaced it with `'use cache'`: it is the previous
+  model, and nothing new is written with it, in an app or in a plugin. Never the `dynamic`
+  and `revalidate` segment configs either, which Cache Components refuse.
+- **A public read is cached where it is written**: a function of a feature's `data/` with
+  `'use cache'`, `cacheLife('content')` and `cacheTag`. Its arguments are its key, it
+  returns plain values, and the CMS invalidates its tags
+  (`@lionel-dutrieux/payload-revalidate`).
+- **`content`, never `max`.** The profile is declared in `next.config.ts`: kept on the
+  server until the CMS invalidates it, which it does at once, and 30 seconds in a
+  visitor's browser, the least Next allows. `max` lets a browser reuse a page for five
+  minutes: an editor who comes back to it does not see what they published.
+- **A read for one user is never cached.** It renders under `<Suspense>`.
+- **A public page never reads the request**: no `headers()`, `cookies()`, `connection()`
+  or `searchParams` in it, nor in what it calls. Its layout sets
+  `ensureStatic = 'navigation'`: Next prerenders the page at its first visit, keeps it,
+  and answers with its own status (404, 308). A page that reads the request answers 200
+  before it renders.
+- **Several tenants**: the proxy writes the request's host into the page's own URL
+  (`/[site]/[locale]/…`), and `requestTenant()` reads that segment with
+  `next/root-params`.
+- After a write, the action updates the cache → `references/mutations.md`.
+
+→ `references/caching.md`. Turning it on in an existing app: the official
+`next-cache-components-adoption` skill.
 
 ## `next.config.ts`
 
 `output: 'standalone'` for the Docker image, `reactCompiler: true` (with
 `babel-plugin-react-compiler`), and `experimental.serverSourceMaps: true` so stack traces
-point at `src/`. The headless front adds `cacheComponents: true`.
+point at `src/`. Both shapes set `cacheComponents: true`, `partialPrefetching: true` and
+the `content` profile of `cacheLife` (`references/caching.md`).
 
 ## Env
 
@@ -191,6 +214,7 @@ unexpected error logged once → `references/observability.md`.
 | File | Read it when |
 |---|---|
 | `references/data.md` | Writing a read: DAL, DTO, actor, TanStack Query, route handler |
+| `references/caching.md` | Caching a read, prerendering a page, finding the tenant of a page |
 | `references/lists.md` | Building a list with search, filters, sort or pagination |
 | `references/mutations.md` | Writing a server action, or handling what it returns |
 | `references/i18n.md` | Setting up next-intl, adding a language or a key, typing the messages |

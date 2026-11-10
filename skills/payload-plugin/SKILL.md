@@ -96,12 +96,17 @@ needs it. Its README lists every export.
   `NotFound`. Codes, not sentences, cross the wire.
 - **Logs**: `payload.logger` / `req.payload.logger` with the plugin's prefix, the error as
   `{ err }` so its stack is kept. `console` only in a CLI.
-- **The site's cached reads** (settings, themes, messages, routes) go through Next's cache
-  under the tags the `revalidate` plugin emits for the documents read, tested against its
-  `createTags`. The plugin invalidates nothing itself, and warns at startup through
-  `payload.logger` when `custom.revalidate` does not cover what it reads. A time-to-live
-  is at most an opt-in, off by default, never the invalidation. A lookup Payload keeps for
-  itself, read outside Next too (tenant-domains' map of domains), may stay in memory.
+- **The site caches, the plugin does not.** A plugin keeps nothing of what a site reads
+  between two requests. It gives each read so that it needs nothing of the request (the
+  tenant and the locale as arguments), and the tags of what the read holds, as the
+  `revalidate` plugin names them, tested against its `createTags` (`settingsTags`,
+  `themesTags`, `messagesTags`). The site writes the `'use cache'`. A plugin ships no
+  `unstable_cache`, which Next 16 replaced, no private module of Next, and no
+  `'use cache'` of its own, which a host without Cache Components could not compile. It
+  invalidates nothing itself, and warns at startup through `payload.logger` when
+  `custom.revalidate` does not cover what a site would cache. A lookup Payload keeps for
+  itself, read outside Next too (tenant-domains' map of domains), may stay in memory; a
+  read is still made once per request.
 - **Admin components are referenced by path** (`'@lionel-dutrieux/payload-<name>/rsc#Name'`),
   never imported from the server entry. They are native Payload UI: `@payloadcms/ui`
   components, Payload's CSS variables, styles in a CSS file under
