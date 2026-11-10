@@ -84,8 +84,9 @@ Next then prerenders each page at its first visit, waits for it, keeps it, and a
 with the page's own status: `404`, `308`. An uncached read fails the page, in `next dev`
 with its stack.
 
-The page awaits its `params` under `<Suspense>`, so the document around it is the same
-for every page:
+What depends on the page's URL is read under `<Suspense>`, so the document around it is
+the same for every page: `next dev` reports a read of the URL outside one. The page awaits
+its `params` there:
 
 ```tsx
 const PageAtUrl = async ({ params }: Props) => {
@@ -101,8 +102,24 @@ const Page = ({ params }: Props) => (
 )
 ```
 
+A layout reads the language, which the build knows, and puts what it holds of the site, a
+tenant's theme, words and cookie banner, in one component under `<Suspense>`, around
+`children`. It never answers with `notFound()` for the URL: the page does.
+
+```tsx
+// app/[site]/[locale]/layout.tsx
+<html lang={locale}>
+  <body>
+    <Suspense>
+      <SiteFrame locale={locale}>{children}</SiteFrame>
+    </Suspense>
+  </body>
+</html>
+```
+
 `generateStaticParams` returns at least one value for each parameter. A build reads no
-database: it returns a value the layout answers with `notFound()` before any read.
+database: it returns a site no tenant has, for which nothing is read and the page answers
+with `notFound()`.
 
 ## Several tenants
 
