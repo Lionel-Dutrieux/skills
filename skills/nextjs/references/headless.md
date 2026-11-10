@@ -46,7 +46,7 @@ export const tags = createTags<Config>()
 // features/pages/data/pages.ts
 export const getPage = async (slug: string) => {
   'use cache'
-  cacheLife('max')
+  cacheLife('content')
   cacheTag(tags.key('pages', 'slug', slug))
 
   const { docs } = await cms.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1 })
