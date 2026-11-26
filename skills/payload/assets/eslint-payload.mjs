@@ -1,7 +1,7 @@
 // Managed by the keyes-dxp `payload` skill. Change the skill, then re-sync: never edit this copy.
 
 // Payload's territory, named as Payload's official templates name it. Blocks are not in
-// it: they follow the blocks plugin's kebab-case folders, as the rest of `src/` does.
+// it: their folders are kebab-case, as the rest of `src/` is.
 const territory = ['collections', 'globals', 'fields', 'access', 'hooks', 'jobs']
 
 const payloadNaming = {

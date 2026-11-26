@@ -25,7 +25,6 @@ On top of the `typescript` and `react` tables:
 | Readable logs in development | `pino-pretty` |
 | Technical documentation | Fumadocs, inside the app → `references/docs.md` |
 | Reading Payload from a headless front | `@payloadcms/sdk` |
-| Cache invalidation from the CMS | `@lionel-dutrieux/payload-revalidate` |
 
 ## Two shapes
 
@@ -141,8 +140,7 @@ Cache Components are on in both shapes.
   and `revalidate` segment configs either, which Cache Components refuse.
 - **A public read is cached where it is written**: a function of a feature's `data/` with
   `'use cache'`, `cacheLife('content')` and `cacheTag`. Its arguments are its key, it
-  returns plain values, and the CMS invalidates its tags
-  (`@lionel-dutrieux/payload-revalidate`).
+  returns plain values, and the CMS invalidates its tags.
 - **`content`, never `max`.** The profile is declared in `next.config.ts`: kept on the
   server until the CMS invalidates it, which it does at once, and 30 seconds in a
   visitor's browser, the least Next allows. `max` lets a browser reuse a page for five
@@ -189,8 +187,7 @@ file, not a hunt for strings.
   missing from the default locale fails `tsc`. A unit test checks that every locale has
   the same keys and the same ICU placeholders.
 - **No word in a component.** The site's words are in `messages/`; the admin's in
-  Payload's `i18n.translations` and the plugins' `translations.ts`. Editors override the
-  site's through the `translations` plugin.
+  Payload's `i18n.translations`.
 - **Dates** go through next-intl's formatter, in the app's `timeZone`.
 
 → `references/i18n.md`
