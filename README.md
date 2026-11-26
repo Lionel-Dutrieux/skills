@@ -16,14 +16,14 @@ pointeur l'y envoie.
 | [`typescript`](skills/typescript/SKILL.md) | Le socle : stack, config ESLint/Prettier/tsconfig, nommage, erreurs, Zod aux frontières, logs, dates, tests, monorepo | — |
 | [`react`](skills/react/SKILL.md) | Composants, design system shadcn, formulaires TanStack Form, data table, état | `typescript` |
 | [`nextjs`](skills/nextjs/SKILL.md) | App Router : structure de `src/`, DAL, server actions, listes SSR, cache, env, i18n, observabilité | `react` |
-| [`payload`](skills/payload/SKILL.md) | Payload dans une app : base de données, territoire et nommage, migrations, nos plugins | `typescript` |
+| [`payload`](skills/payload/SKILL.md) | Payload dans une app : base de données, territoire et nommage, migrations, où trouver nos plugins | `typescript` |
 
 **Les paquets à utiliser** sont dans le tableau `Stack` en tête de chaque `SKILL.md`, du
 socle vers le framework : [`typescript`](skills/typescript/SKILL.md#stack) (outillage,
 validation, logs, dates, tests), [`react`](skills/react/SKILL.md#stack) (UI, formulaires,
-état), [`nextjs`](skills/nextjs/SKILL.md#stack) (actions, env, i18n, tracing, headless). Nos
-plugins Payload sont dans [`payload`](skills/payload/SKILL.md#our-plugins). Chaque paquet
-n'apparaît que dans un tableau.
+état), [`nextjs`](skills/nextjs/SKILL.md#stack) (actions, env, i18n, tracing, headless). Chaque
+paquet n'apparaît que dans un tableau. Nos plugins Payload livrent leur propre skill dans
+leur paquet npm : [`payload`](skills/payload/SKILL.md#our-plugins) dit où le lire.
 
 Les skills se citent entre eux et renvoient aux skills officiels quand ceux-ci prennent le
 relais. Ces derniers s'installent par projet, pour suivre la version du framework :
