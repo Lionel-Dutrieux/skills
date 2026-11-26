@@ -19,7 +19,7 @@ the skill.
 | Package manager | pnpm |
 | Runtime | Node 24 |
 | Language | TypeScript 6.0 — the highest version typescript-eslint supports |
-| Lint and format | oxlint + oxfmt in a project `create-app` generates and in the payload-plugins repo; ESLint 10 + Prettier, through the synced config, in an older project |
+| Lint and format | oxlint + oxfmt in a project `create-app` generates; ESLint 10 + Prettier, through the synced config, in an older project |
 | Validation | Zod 4 |
 | HTTP | the native `fetch` |
 | Logging | pino |

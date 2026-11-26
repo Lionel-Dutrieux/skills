@@ -1,6 +1,6 @@
 ---
 name: payload
-description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins (roles, routes, blocks, settings, themes, forms, email, SEO, translations, multi-tenancy and more) or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo. Writing a plugin package: the `payload-plugin` skill.
+description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins (roles, routes, blocks, settings, themes, forms, email, SEO, translations, multi-tenancy and more) or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo.
 ---
 
 # keyes-dxp Payload

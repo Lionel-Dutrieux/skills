@@ -54,20 +54,14 @@ and `.prettierignore` paths take the app's prefix (`apps/web/src/components/ui`)
   holds `vi.mock('server-only', () => ({}))`. `next.config.ts` carries the settings the
   `nextjs` skill lists.
 
-### `payload` — the project embeds Payload, or is a Payload plugin
+### `payload` — the project embeds Payload
 
 - **Copy to `.config/keyes-dxp/`**: `eslint-payload.mjs` (from `payload/assets/`)
 - **Add to `.prettierignore`**: `src/payload-types.ts`, `src/payload-generated-schema.ts`,
   `src/app/(payload)/admin/importMap.js`, `src/migrations` — Payload writes them
-- `package.json` has `"type": "module"`. An app also gets the `@payload-config` path
-  (`"./src/payload.config.ts"`) in `tsconfig.json`, and `withPayload(…)` as the outermost
-  wrapper of `next.config.ts`. ESLint spreads `payload` in an app.
-
-### `payload-plugin` — the project is a Payload plugin package
-
-- **Copy to `.config/keyes-dxp/`**: `eslint-payload-plugin.mjs` (from
-  `payload-plugin/assets/`); ESLint spreads `payloadPlugin` after `typescript` and `react`.
-- `package.json` has `"type": "module"`; `tsconfig.json` sets `NodeNext`.
+- `package.json` has `"type": "module"`, `tsconfig.json` the `@payload-config` path
+  (`"./src/payload.config.ts"`), and `next.config.ts` `withPayload(…)` as its outermost
+  wrapper. ESLint spreads `payload`.
 
 ## Steps
 
