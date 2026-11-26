@@ -3,6 +3,23 @@
 Read this when a project needs its lint, format, TypeScript or test config set up, or when
 the user asks to sync it with the skills.
 
+## A project `create-app` generated
+
+It lints with oxlint and formats with oxfmt: `.oxlintrc.json` and `.oxfmtrc.json` at its
+root, `pnpm lint` (`oxlint`), `pnpm format` (`oxfmt`), `pnpm format:check`. Those files are
+the project's: never add ESLint or Prettier to it, and never copy the `eslint-*.mjs` or
+`prettier.mjs` layers. From the skills it keeps `.config/keyes-dxp/playwright.base.ts`
+alone, synced as below.
+
+`.oxlintrc.json` holds the rules of the `typescript` layer that oxlint has:
+`consistent-type-definitions` (`type`), file names in kebab-case (camelCase or PascalCase
+allowed in Payload's territory), `func-style` (`expression`) and `no-console`. The layers'
+other rules hold there as conventions, written in the skills, that review checks: no
+barrel (`export *`), no default export outside what a framework loads, `import type` for
+types, the libraries the stack bans (axios, moment, dayjs, luxon), React's and Next's rules.
+
+The rest of this page is for a project that is not one: it takes the layers.
+
 ## Layers
 
 Each skill ships a layer in its `assets/` folder; a project takes the layers of the skills
