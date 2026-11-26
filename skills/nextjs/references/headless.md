@@ -40,22 +40,28 @@ A read made for one user never goes in `'use cache'`.
 `@lionel-dutrieux/payload-revalidate`, typed on the CMS config:
 
 ```ts
-// src/lib/cache-tags.ts
+// src/lib/tags.ts
 export const tags = createTags<Config>()
 
 // features/pages/data/pages.ts
-export const getPage = async (slug: string) => {
+export const getPage = async (tenant: string, slug: string) => {
   'use cache'
   cacheLife('content')
   cacheTag(tags.key('pages', 'slug', slug))
 
-  const { docs } = await cms.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1 })
+  const { docs } = await cms.find({
+    collection: 'pages',
+    where: { and: [{ tenant: { equals: tenant } }, { slug: { equals: slug } }] },
+    limit: 1,
+  })
   return docs[0] ? toPageDto(docs[0]) : null
 }
 ```
 
-A list, a menu or a sitemap carries `tags.collection(slug)`; a global, `tags.global(slug)`.
-Cached reads ask for published content only.
+The tenant is an argument, so it is part of the cache key, and the `where` filters on it:
+two tenants with the same slug get two entries (`references/caching.md`). A list, a menu
+or a sitemap carries `tags.collection(slug)`; a global, `tags.global(slug)`. Cached reads
+ask for published content only.
 
 ## Invalidation
 
