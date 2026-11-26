@@ -30,7 +30,7 @@ relais. Ces derniers s'installent par projet, pour suivre la version du framewor
 
 | Skill officiel | Source |
 |---|---|
-| `payload` | `npx skills add payloadcms/skills --skill payload` |
+| `payload` | livré dans le paquet : `node_modules/payload/skills/payload/SKILL.md` ; une version qui n'en livre pas : `npx skills add payloadcms/skills --skill payload` |
 | `shadcn` | `npx skills add shadcn-ui/ui --skill shadcn` |
 | `next-dev-loop`, `next-cache-components-adoption`, `next-bundle-optimizer` | `npx skills add vercel/next.js` |
 
