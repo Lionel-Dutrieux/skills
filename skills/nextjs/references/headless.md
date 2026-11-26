@@ -36,13 +36,10 @@ A read made for one user never goes in `'use cache'`.
 
 ## Cached public reads
 
-`next.config.ts` sets `cacheComponents: true`. Tags come from
-`@lionel-dutrieux/payload-revalidate`, typed on the CMS config:
+`next.config.ts` sets `cacheComponents: true`. Tags are named as the plugin that
+invalidates them names them, typed on the CMS config:
 
 ```ts
-// src/lib/tags.ts
-export const tags = createTags<Config>()
-
 // features/pages/data/pages.ts
 export const getPage = async (tenant: string, slug: string) => {
   'use cache'
@@ -60,18 +57,13 @@ export const getPage = async (tenant: string, slug: string) => {
 
 The tenant is an argument, so it is part of the cache key, and the `where` filters on it:
 two tenants with the same slug get two entries (`references/caching.md`). A list, a menu
-or a sitemap carries `tags.collection(slug)`; a global, `tags.global(slug)`. Cached reads
-ask for published content only.
+or a sitemap carries its collection's tag; a global, its own. Cached reads ask for
+published content only.
 
 ## Invalidation
 
-```ts
-// src/app/api/revalidate/route.ts
-export const { POST } = createRevalidateHandler({ secret: () => env.REVALIDATE_SECRET })
-```
-
-The CMS calls it after every published change. `REVALIDATE_SECRET` is the same on both
-sides, at least 32 characters.
+The CMS calls a route handler of the front after every published change, with a secret
+both sides share: the plugin that invalidates says in its skill how to write it.
 
 ## Tracing across the two apps
 

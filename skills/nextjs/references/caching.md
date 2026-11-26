@@ -11,8 +11,7 @@ its log what the build does not: read it after a change.
 Next 16 replaced `unstable_cache` with `'use cache'`. It still runs, as the previous
 model: nothing is written with it any more, and what still uses it is migrated. A plugin
 caches nothing at all: it gives a read that needs nothing of the request and the tags of
-what the read holds (`settingsTags`, `themesTags`, `messagesTags`, routes'
-`resolveRoute`), and the app writes the `'use cache'`.
+what the read holds, and the app writes the `'use cache'`.
 
 ## The `content` profile
 
@@ -30,8 +29,8 @@ cacheLife: {
 `stale` is how long a visitor's browser reuses a page without asking the server. Next
 refuses less than 30 seconds for a page it prerenders; `max` sets five minutes, and an
 editor who comes back to a page they just published sees the old one. On the server, the
-entry is kept until the CMS invalidates its tag, and the revalidate plugin expires it at
-once (`{ expire: 0 }`, its default): the next visit reads Payload again.
+entry is kept until the CMS invalidates its tag, which expires it at once: the next visit
+reads Payload again.
 
 `typecheck` runs `next typegen` first (`next typegen && tsc --noEmit`): the profile's
 name and the exports of `next/root-params` are typed from generated files.
@@ -59,9 +58,9 @@ const publishedForm = async (id: string, locale: Locale): Promise<FormDto> => {
 }
 ```
 
-- Tags come from `createTags<Config>()` of `@lionel-dutrieux/payload-revalidate/next`, in
-  `src/lib/tags.ts`. Every collection or global a read tags is listed in
-  `revalidatePlugin`: the CMS invalidates the read, and the pages that hold it.
+- Tags are named as the plugin that invalidates them names them, never by hand: its skill
+  says how, and how a collection or global a read tags gets covered. The CMS then
+  invalidates the read, and the pages that hold it.
 - Nothing of the request is read inside: `headers()` and `cookies()` throw there. Pass
   what the read needs as arguments.
 - A read of a tenant's content is keyed on the tenant: it takes it as an argument, or
@@ -171,7 +170,7 @@ next-intl reads the language the same way (`locale` from `next/root-params` in
   `connection()` first.
 - Draft mode: Next bypasses every cache while it is on. The draft is read by a function
   of its own, outside `'use cache'`, which reads nothing unless the request previews
-  this document (`isPreviewing`, from the routes plugin's `createRoutes`, checks the
-  admin's signed link for the tenant and the path); only then does it pass `draft: true`.
+  this document (the admin's signed link, checked for the tenant and the path); only then
+  does it pass `draft: true`.
   A `'use cache'` function never passes `draft: true`: its entry would serve the draft to visitors.
 - Payload's admin. Its layout sets `instant = false` and awaits `connection()`.
