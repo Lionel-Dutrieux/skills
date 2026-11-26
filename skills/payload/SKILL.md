@@ -70,6 +70,9 @@ follow the `blocks` plugin, one kebab-case folder per block.
   `after*` hook queues a task with `req`; the task is idempotent and does nothing when
   its target is gone. An email is an Email Type of the `email` plugin, sent with the
   `send` its `defineEmails` returns, through the email adapter the config declares.
+- **The server runs the queues.** The app is one long-running Node server, so
+  `jobs.autoRun` lists every queue with its `cron`: the app's own and each plugin's. A
+  queue left out never runs, and its jobs wait for ever.
 - **The Next.js cache is invalidated by the `revalidate` plugin**, from the tags the site
   caches its reads under. Collections carry no hand-written revalidation hook, and every
   collection or global a cached read tags is listed in `revalidatePlugin`.

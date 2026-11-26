@@ -26,9 +26,9 @@ URL through nuqs.
 
 ## One table, three files in its feature
 
-- `lib/params.ts`: `...dataTableParams(SORTS, 'name')`, the filters
+- `lib/search-params.ts`: `...dataTableParams(SORTS, 'name')`, the filters
   (`parseAsValues`, `parseAsIDs`) and `createLoader`.
-- `server/<feature>.ts`: the DAL, answering a `Page<Row>`.
+- `data/<thing>.ts`: the DAL, answering a `Page<Row>`.
 - `components/<feature>-table.tsx`: the columns and the toolbar.
 
 ```tsx

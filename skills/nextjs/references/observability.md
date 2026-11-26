@@ -42,6 +42,9 @@ export const onRequestError: Instrumentation.onRequestError = async (error, requ
 }
 ```
 
+That is the headless front. With Payload embedded there is no `@/lib/logger`: the hook
+logs through `(await getPayload({ config })).logger`.
+
 `PinoInstrumentation` adds `trace_id` and `span_id` to every log line, linking each log to
 its trace.
 
