@@ -19,18 +19,19 @@ the skill.
 | Package manager | pnpm |
 | Runtime | Node 24 |
 | Language | TypeScript 6.0 — the highest version typescript-eslint supports |
-| Lint and format | ESLint 10 + Prettier, through the synced config; oxlint + oxfmt in the payload-plugins repo and the projects `create-app` generates |
+| Lint and format | oxlint + oxfmt in a project `create-app` generates and in the payload-plugins repo; ESLint 10 + Prettier, through the synced config, in an older project |
 | Validation | Zod 4 |
 | HTTP | the native `fetch` |
 | Logging | pino |
 | Dates | date-fns 4 + `@date-fns/tz` |
 | Tests | Vitest 5 and Playwright |
-
-The payload-plugins repo and the projects `create-app` generates take their versions from
-that repo's catalog (`pnpm-workspace.yaml`), and their lint and format from oxlint and
-oxfmt, as Payload's own repository does: their `.oxlintrc.json` and `.oxfmtrc.json` are
-the config there, and the rules below hold through them.
 | LLM calls | Vercel AI SDK (`ai`) |
+
+A project `create-app` generates takes its versions from the payload-plugins catalog
+(`pnpm-workspace.yaml`), and its lint and format from its own `.oxlintrc.json` and
+`.oxfmtrc.json`, as Payload's repository does. It gets no ESLint or Prettier:
+`references/config.md` says what it takes from the skills, and which rules hold there
+as conventions only.
 
 A need with no row: ask the user which library to use, then propose adding the row.
 Before adding a package, check `package.json`: it may already be there, brought by another

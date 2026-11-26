@@ -56,6 +56,10 @@ installe ou resynchronise quand on le lui demande (« synchronise la config keye
 selon [`typescript/references/config.md`](skills/typescript/references/config.md). Une règle
 se change dans le skill, jamais dans la copie.
 
+Un projet créé par `create-app` fait exception : il lint avec oxlint et formate avec
+oxfmt, selon ses propres `.oxlintrc.json` et `.oxfmtrc.json`, et ne garde des skills que
+`playwright.base.ts`.
+
 ## Structure
 
 ```
