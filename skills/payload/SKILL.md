@@ -1,13 +1,15 @@
 ---
 name: payload
-description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo.
+description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill that Payload ships in its package. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo.
 ---
 
 # keyes-dxp Payload
 
 Load first: `typescript`. How Payload works — collections, fields, hooks, access, the Local
-API: the official `payload` skill and the installed `.d.ts`. This skill holds our choices
-on top. Application code reaching Payload: `nextjs` skill.
+API: the official skill that the installed package ships
+(`node_modules/payload/skills/payload/SKILL.md`), then the installed `.d.ts`. A version
+that ships none takes it from `payloadcms/skills`. This skill holds our choices on top.
+Application code reaching Payload: `nextjs` skill.
 
 Payload 4, embedded in Next.js: a beta for now, pinned in the payload-plugins catalog that
 `create-app` copies. A project started earlier stays on Payload 3 until it migrates: read
