@@ -14,7 +14,7 @@ pointeur l'y envoie.
 | Skill | Couvre | Charge aussi |
 |---|---|---|
 | [`typescript`](skills/typescript/SKILL.md) | Le socle : stack, config ESLint/Prettier/tsconfig, nommage, erreurs, Zod aux frontières, logs, dates, tests, monorepo | — |
-| [`react`](skills/react/SKILL.md) | Composants, design system shadcn, formulaires TanStack Form, état | `typescript` |
+| [`react`](skills/react/SKILL.md) | Composants, design system shadcn, formulaires TanStack Form, data table, état | `typescript` |
 | [`nextjs`](skills/nextjs/SKILL.md) | App Router : structure de `src/`, DAL, server actions, listes SSR, cache, env, i18n, observabilité | `react` |
 | [`payload`](skills/payload/SKILL.md) | Payload dans une app : base de données, territoire et nommage, migrations, nos plugins | `typescript` |
 | [`payload-plugin`](skills/payload-plugin/SKILL.md) | Écrire un plugin Payload (repo payload-plugins) : anatomie, kit, options, fusion, accès, multi-tenant et sécurité, erreurs, package, tests, docs | `typescript`, `payload` |
@@ -66,7 +66,7 @@ skills/
   <skill>/
     SKILL.md          # ce dont toutes les tâches du skill ont besoin
     references/       # ce dont seules certaines tâches ont besoin, lu via un pointeur
-    assets/           # la couche de config du skill, copiée dans les projets
+    assets/           # ce que le skill copie dans les projets : sa config, et la data table de react
 ```
 
 ## Contribuer

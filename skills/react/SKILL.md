@@ -25,7 +25,7 @@ from; this one covers what renders it.
 | Rich text | Payload's `RichText` (`@payloadcms/richtext-lexical/react`) inside `prose` classes (`@tailwindcss/typography`) |
 | Email templates | react-email |
 | Chat UI | AI Elements (a shadcn registry), over the Vercel AI SDK |
-| Tables | TanStack Table |
+| Tables | TanStack Table v9, through our data table → `references/data-table.md` |
 | Long lists | TanStack Virtual |
 | Keyboard shortcuts | TanStack Hotkeys |
 | Debounce, throttle | TanStack Pacer |
@@ -105,6 +105,7 @@ uploadQueue.actions.remove(id)
 | File | Read it when |
 |---|---|
 | `references/forms.md` | Building a form or a field type, or showing a submission error |
+| `references/data-table.md` | Showing rows in a table: installing the data table, its columns and filters |
 
 The ESLint layer is `assets/eslint-react.mjs`, synced as `typescript`'s
 `references/config.md` describes.

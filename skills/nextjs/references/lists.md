@@ -78,6 +78,25 @@ const [{ q, sort }, setQuery] = useQueryStates(postsSearchParams, { shallow: fal
 
 `NuqsAdapter` from `nuqs/adapters/next/app` wraps the root layout once.
 
+## A data table
+
+A list shown as a table is `react`'s data table (`references/data-table.md`). Its parsers
+start from `dataTableParams`, which accepts only the sorts given and a page from 1. Its
+DAL holds the same rules as above, and three more:
+
+- **The `where` stays in the DAL**, built from `where.ts`: `inTenant`, `oneOf` (with `NONE`
+  for an empty field) and `searchIn`. What a filter means is the feature's business.
+- **`id` breaks ties**: `sort: [sort, 'id']`, or two pages can show the same row.
+- **A page past the last redirects** to the last, once the DAL has counted:
+
+```ts
+const last = Math.max(1, Math.ceil(page.total / params.perPage))
+if (params.page > last) redirect(serializeMemberParams('/members', { ...params, page: last }))
+```
+
+The table keeps its rows on screen, dimmed, while the next page loads (`useDataTableQuery`
+runs each change in a transition): no `<Suspense key>` around it.
+
 ## Beyond pages
 
 An infinite scroll, or a list the browser keeps fresh, moves to TanStack Query

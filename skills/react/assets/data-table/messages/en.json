@@ -1,0 +1,27 @@
+{
+  "DataTable": {
+    "shownColumns": "Shown columns",
+    "range": "{first}–{last} of {total}",
+    "perPage": "Rows per page",
+    "pagination": "Pages",
+    "previous": "Previous",
+    "next": "Next",
+    "goTo": "Page {page}",
+    "clearSearch": "Clear search",
+    "chosen": "{count} chosen",
+    "noOption": "No option found.",
+    "clearFilter": "Clear filter",
+    "reset": "Reset",
+    "selectRow": "Select row",
+    "selectPage": "Select page",
+    "selected": "{count, plural, one {# selected} other {# selected}}",
+    "clearSelection": "Clear selection",
+    "display": "Display",
+    "density": "Density",
+    "densities": {
+      "compact": "Compact",
+      "comfortable": "Comfortable"
+    },
+    "rowsPerPage": "{count} per page"
+  }
+}
