@@ -14,7 +14,7 @@ closed. The kit's README details every helper named here.
   OIDC identities) is left out of the multi-tenant plugin's `collections`, and the plugin
   refuses to start when it is scoped, saying why.
 - **Tenant domains are read through the kit** (`tenantForHost`, `primaryDomainOf`,
-  `isTrustedHost`), never by depending on the tenant-domains plugin: without it, every
+  `isTrustedHost`), never by depending on the multi-tenant plugin: without it, every
   helper answers as if no domain were declared.
 - **Tested on `test/int/multi-tenant-config.ts`**: a tenant's admin reads and writes in
   their tenant only, and a write into another tenant is a 403.

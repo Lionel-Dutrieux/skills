@@ -105,7 +105,7 @@ needs it. Its README lists every export.
   `'use cache'` of its own, which a host without Cache Components could not compile. It
   invalidates nothing itself, and warns at startup through `payload.logger` when
   `custom.revalidate` does not cover what a site would cache. A lookup Payload keeps for
-  itself, read outside Next too (tenant-domains' map of domains), may stay in memory; a
+  itself, read outside Next too (multi-tenant's map of domains), may stay in memory; a
   read is still made once per request.
 - **Admin components are referenced by path** (`'@lionel-dutrieux/payload-<name>/rsc#Name'`),
   never imported from the server entry. They are native Payload UI: `@payloadcms/ui`

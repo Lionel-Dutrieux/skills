@@ -9,9 +9,14 @@ Load first: `typescript`. How Payload works — collections, fields, hooks, acce
 API: the official `payload` skill and the installed `.d.ts`. This skill holds our choices
 on top. Application code reaching Payload: `nextjs` skill.
 
-Payload 3, embedded in Next.js. A project is multi-tenant from the start, even with one
-tenant: Payload's official `@payloadcms/plugin-multi-tenant` and our `tenant-domains`.
-Adding tenancy later means migrating all the content.
+Payload 4, embedded in Next.js: a beta for now, pinned in the payload-plugins catalog that
+`create-app` copies. A project started earlier stays on Payload 3 until it migrates: read
+the installed version before relying on an API.
+
+A project is multi-tenant from the start, even with one tenant: our `multi-tenant` plugin,
+which calls Payload's official `@payloadcms/plugin-multi-tenant` with its `multiTenant`
+options and adds the domains each tenant is reached on. Adding tenancy later means
+migrating all the content.
 
 ## The database
 
@@ -45,7 +50,7 @@ src/
   migrations/                                written by `payload migrate:create`
   plugins/audit-logs.ts                      one file per optional plugin, all it touches
   roles.ts                                   the roles plugin's roles and access
-  tenancy.ts                                 the tenants, for multi-tenant and tenant-domains
+  tenancy.ts                                 the tenants, for the multi-tenant plugin
   seeds.ts                                   the seed plugin's definitions
   payload.config.ts
   payload-types.ts                           generated
@@ -98,7 +103,7 @@ way of doing what the rest of the project does one way.
 | Need | Plugin |
 |---|---|
 | Roles per tenant and the access of every collection, global and field | `roles` |
-| The domains each tenant is reached on, resolved from the request's `Host` | `tenant-domains` |
+| Tenancy: Payload's multi-tenant plugin, and the domains each tenant is reached on | `multi-tenant` |
 | Settings groups edited in the admin, locked from code, secrets encrypted | `settings` |
 | Localized routes, links, locale switcher, hreflang and sitemap on next-intl | `routes` |
 | Blocks with their views and settings in one folder, a typed registry | `blocks` |
@@ -116,6 +121,7 @@ way of doing what the rest of the project does one way.
 | One AI provider per project or tenant, and a runtime other plugins call | `ai` |
 | Audit trail of changes, publishes and sign-ins | `audit-logs` |
 | Server errors captured in the admin, for a project with no Sentry | `errors` |
+| The admin's dashboard: collections and globals by group, drafts, last edits | `dashboard` |
 | Cookie consent banner, consent records, scripts loaded on consent | `consent` |
 | Sign-in through an OpenID Connect provider | `oidc` |
 | Moving content between instances (staging to production) | `content-sync` |
@@ -128,7 +134,7 @@ exports, how it scopes by tenant, its limits), and its types in `dist/**/*.d.ts`
 plugins are recent and change; what you remember of them is likely wrong.
 
 They are built to work together: `roles` closes the access of what the others add,
-`tenant-domains` gives them the tenant of a host, and what the site caches of their reads
+`multi-tenant` gives them the tenant of a host, and what the site caches of their reads
 (settings, themes, translations, routes), under the tags they name, is invalidated by
 `revalidate`. A plugin left out of a
 project removes cleanly: its file in `src/plugins/`, its lines, its dependency.
