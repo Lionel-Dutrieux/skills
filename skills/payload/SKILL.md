@@ -1,6 +1,6 @@
 ---
 name: payload
-description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins (roles, routes, blocks, settings, themes, forms, email, SEO, translations, multi-tenancy and more) or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo.
+description: keyes-dxp conventions for Payload CMS, on top of the official `payload` skill. Use when adding or naming a collection, global, block, field, hook, access rule, job, seed or migration; when a need might already be met by one of our `@lionel-dutrieux/payload-*` plugins or the project already uses them; when starting a project with `@lionel-dutrieux/create-app`; or when setting up the CMS app of a headless repo.
 ---
 
 # keyes-dxp Payload
@@ -13,10 +13,8 @@ Payload 4, embedded in Next.js: a beta for now, pinned in the payload-plugins ca
 `create-app` copies. A project started earlier stays on Payload 3 until it migrates: read
 the installed version before relying on an API.
 
-A project is multi-tenant from the start, even with one tenant: our `multi-tenant` plugin,
-which calls Payload's official `@payloadcms/plugin-multi-tenant` with its `multiTenant`
-options and adds the domains each tenant is reached on. Adding tenancy later means
-migrating all the content.
+A project is multi-tenant from the start, even with one tenant, on Payload's official
+`@payloadcms/plugin-multi-tenant`. Adding tenancy later means migrating all the content.
 
 ## The database
 
@@ -42,45 +40,40 @@ src/
   collections/Posts/index.ts                 a folder per collection, PascalCase
   collections/Posts/hooks/populateAuthors.ts one hook per file, camelCase, named for its effect
   globals/Header/index.ts
-  blocks/call-to-action/block.ts             + renderer.ts, view.tsx: the blocks plugin's layout
+  blocks/call-to-action/                     a folder per block, kebab-case
   fields/link.ts                             reusable field factories
   access/authenticated.ts                    one access function per file
   hooks/populatePublishedAt.ts               hooks shared by several collections
   jobs/sendWelcomeEmail.ts                   one task per file
   migrations/                                written by `payload migrate:create`
-  plugins/audit-logs.ts                      one file per optional plugin, all it touches
-  roles.ts                                   the roles plugin's roles and access
-  tenancy.ts                                 the tenants, for the multi-tenant plugin
-  seeds.ts                                   the seed plugin's definitions
+  plugins/<plugin>.ts                        one file per optional plugin, all it touches
   payload.config.ts
   payload-types.ts                           generated
 ```
 
-Slugs are kebab-case: `slug: 'blog-posts'`. Blocks are the exception to PascalCase: they
-follow the `blocks` plugin, one kebab-case folder per block.
+Slugs are kebab-case: `slug: 'blog-posts'`. Blocks are the exception to PascalCase: one
+kebab-case folder per block.
 
 ## Rules
 
 - **Access is closed explicitly.** Every collection and global declares `access` for each
-  operation; Payload's default lets any signed-in user do everything. With the `roles`
-  plugin it is declared in `src/roles.ts`, and Payload refuses to start when a collection
-  escapes it; without it, the logic lives in `src/access/`, never inline.
-- **A block's `block.ts` is territory; its `renderer.ts`, `view.tsx` and `load.ts` are
-  the site's code**: they may call a feature's `data/`, and the blocks plugin hands a view
-  its document and the request's context (Payload included) by design.
+  operation; Payload's default lets any signed-in user do everything. When a plugin
+  declares the project's access, its skill says where; otherwise the logic lives in
+  `src/access/`, never inline.
+- **A block's config is territory; the code that renders it is the site's**: it may call
+  a feature's `data/`.
 - **The territory never imports `data/`.** The DAL is for application code. A hook or a
   task works through `req.payload`, and passes `req` to every nested call so it shares
   the transaction.
 - **An effect outside the database runs in a job.** An email, an HTTP call, a push: the
   `after*` hook queues a task with `req`; the task is idempotent and does nothing when
-  its target is gone. An email is an Email Type of the `email` plugin, sent with the
-  `send` its `defineEmails` returns, through the email adapter the config declares.
+  its target is gone.
 - **The server runs the queues.** The app is one long-running Node server, so
   `jobs.autoRun` lists every queue with its `cron`: the app's own and each plugin's. A
   queue left out never runs, and its jobs wait for ever.
-- **The Next.js cache is invalidated by the `revalidate` plugin**, from the tags the site
-  caches its reads under. Collections carry no hand-written revalidation hook, and every
-  collection or global a cached read tags is listed in `revalidatePlugin`.
+- **The Next.js cache is invalidated through tags**, the ones the site caches its reads
+  under, by the plugin that invalidates them: collections carry no hand-written
+  revalidation hook.
 - **SQL is the exception.** The Local API first. Drizzle only for what it cannot express —
   a row lock, an aggregate, `on conflict`, a set-based write — through
   `payload.db.drizzle` over the generated tables, with the reason in a comment.
@@ -96,59 +89,23 @@ Published on GitHub Packages as `@lionel-dutrieux/payload-<name>`. The project's
 says `@lionel-dutrieux:registry=https://npm.pkg.github.com`; the token
 (`read:packages`) lives in the user's `~/.npmrc`, never in the repo.
 
-Before writing code for a need, look here: it is often a plugin already, tested, secured,
-multi-tenant and cached the way the others are. Writing it again by hand means a second
-way of doing what the rest of the project does one way.
+Before writing code for a need, check whether an installed plugin covers it
+(`ls node_modules/@lionel-dutrieux`): it is tested, secured, multi-tenant and cached the
+way the others are. Each ships, matching its installed version, its skill
+(`node_modules/@lionel-dutrieux/payload-<name>/skills/payload-<name>/SKILL.md`) and its
+documentation as one file (`llms.md`, at the package's root): read them before using it, never
+memory. A plugin left out of a project removes cleanly: its file in `src/plugins/`, its
+lines, its dependency.
 
-| Need | Plugin |
-|---|---|
-| Roles per tenant and the access of every collection, global and field | `roles` |
-| Tenancy: Payload's multi-tenant plugin, and the domains each tenant is reached on | `multi-tenant` |
-| Settings groups edited in the admin, locked from code, secrets encrypted | `settings` |
-| Localized routes, links, locale switcher, hreflang and sitemap on next-intl | `routes` |
-| Blocks with their views and settings in one folder, a typed registry | `blocks` |
-| Site themes as typed tokens rendered as CSS variables | `themes` |
-| Metadata, robots, sitemap per tenant and structured data | `seo` |
-| Fields Payload lacks: link, URL, color, icon, phone, encrypted secret | `fields` |
-| Forms built in the admin, anti-bot, uploads, a headless TanStack Form renderer | `forms` |
-| Templated emails (React Email) sent through SMTP, Azure or Payload's adapter | `email` |
-| Typed notifications routed by rules to email, Teams or the host's channels | `notifications` |
-| Editors overriding the front's next-intl messages | `translations` |
-| Machine translation of a document's localized content, as drafts | `content-translation` |
-| Invalidating the Next.js cache when content goes public | `revalidate` |
-| Review and approval before publishing | `publishing-workflows` |
-| Automations built in the admin: triggers, conditions, waits, actions | `automations` |
-| One AI provider per project or tenant, and a runtime other plugins call | `ai` |
-| Audit trail of changes, publishes and sign-ins | `audit-logs` |
-| Server errors captured in the admin, for a project with no Sentry | `errors` |
-| The admin's dashboard: collections and globals by group, drafts, last edits | `dashboard` |
-| Cookie consent banner, consent records, scripts loaded on consent | `consent` |
-| Sign-in through an OpenID Connect provider | `oidc` |
-| Moving content between instances (staging to production) | `content-sync` |
-| Synchronising collections with Azure Service Bus topics | `service-bus` |
-| Reference data and demo content, typed and idempotent | `seed` |
-
-**Read a plugin's documentation before using it**, never memory: each package ships it as
-one Markdown file, `node_modules/@lionel-dutrieux/payload-<name>/llms.md` (options,
-exports, how it scopes by tenant, its limits), and its types in `dist/**/*.d.ts`. Our
-plugins are recent and change; what you remember of them is likely wrong.
-
-They are built to work together: `roles` closes the access of what the others add,
-`multi-tenant` gives them the tenant of a host, and what the site caches of their reads
-(settings, themes, translations, routes), under the tags they name, is invalidated by
-`revalidate`. A plugin left out of a
-project removes cleanly: its file in `src/plugins/`, its lines, its dependency.
-
-**A new project** starts from `pnpm create @lionel-dutrieux/app`: the `website` template
-(a complete multi-tenant site with every plugin wired) or `blank` (users, media, tenants).
-Its `AGENTS.md` says where things are; follow it over this skill where they differ.
+**A new project** starts from `pnpm create @lionel-dutrieux/app`. Its `AGENTS.md` says
+where things are and which plugins it wires; follow it over this skill where they differ.
 
 ## The CMS of a headless repo
 
 `apps/cms` is a Next.js app carrying only Payload's route group. It writes its types for
-the front: `typescript.outputFile` points at `packages/cms-types/src/payload-types.ts`. The
-`revalidate` plugin declares a `remote` target: the front's `/api/revalidate`, with the
-secret both sides share. The front's side: `nextjs` skill, `references/headless.md`.
+the front: `typescript.outputFile` points at `packages/cms-types/src/payload-types.ts`. It
+invalidates the front's cache over HTTP, with a secret both sides share: the plugin that
+does it says how in its skill. The front's side: `nextjs` skill, `references/headless.md`.
 
 ## References
 
