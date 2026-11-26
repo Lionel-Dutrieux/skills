@@ -64,6 +64,9 @@ const publishedForm = async (id: string, locale: Locale): Promise<FormDto> => {
   `revalidatePlugin`: the CMS invalidates the read, and the pages that hold it.
 - Nothing of the request is read inside: `headers()` and `cookies()` throw there. Pass
   what the read needs as arguments.
+- A read of a tenant's content is keyed on the tenant: it takes it as an argument, or
+  calls `requestTenant()` inside (below), and filters on it. A read by slug or path
+  without it serves one tenant's page to another.
 - React's `cache()` shares a read within one render (the page and its
   `generateMetadata`). It keeps nothing between requests.
 - A read for one user is never cached.
@@ -166,5 +169,9 @@ next-intl reads the language the same way (`locale` from `next/root-params` in
 
 - A route handler that answers for the request's host (`sitemap.ts`, `robots.ts`) awaits
   `connection()` first.
-- Draft mode: Next bypasses every cache while it is on, and the page reads the draft.
+- Draft mode: Next bypasses every cache while it is on. The draft is read by a function
+  of its own, outside `'use cache'`, which reads nothing unless the request previews
+  this document (`isPreviewing`, from the routes plugin's `createRoutes`, checks the
+  admin's signed link for the tenant and the path); only then does it pass `draft: true`.
+  A `'use cache'` function never passes `draft: true`: its entry would serve the draft to visitors.
 - Payload's admin. Its layout sets `instant = false` and awaits `connection()`.
